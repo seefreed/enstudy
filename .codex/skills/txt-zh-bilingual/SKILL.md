@@ -11,18 +11,18 @@ Convert English `.txt` files into bilingual JSON arrays, with sentence splitting
 
 ## Workflow
 
-### 1. Prepare sentence segments
+### 1. Prepare sentence segments (AI-guided)
 
-Run the helper script to split and merge English sentences, producing a JSON skeleton with empty `zh` fields.
+Read the `.txt` file and manually build sentence segments in context instead of relying on the script. The source text may contain line breaks, captions, or fragments that are not full sentences, so reconstruct coherent English sentences before translation.
 
-```bash
-python3 scripts/txt_to_bilingual_json.py path/to/file.txt
-```
+Guidelines:
+- Merge fragments split by newlines into complete sentences when they belong together.
+- Preserve intentional short lines only when they are standalone utterances (e.g., sound cues, one-word reactions, quoted asides).
+- If a line is obviously a continuation (starts with conjunctions like "and", "but", "so", or lowercase), merge it into the previous segment.
+- If punctuation is missing but the meaning clearly continues, merge until the thought completes.
+- Keep each `en` segment concise; split long sentences if they become unwieldy for translation.
 
-Notes:
-- The output file is created next to the input with the same basename and `.json` extension.
-- Sentences with fewer than 5 words are merged into the previous sentence; if there is no previous sentence, they merge into the next one.
-- Adjust the threshold when needed: `--min-words 5`.
+Create a JSON array where each object has `en` filled and `zh` empty.
 
 ### 2. Translate each segment
 
@@ -38,6 +38,6 @@ Ensure the JSON is an array of objects like:
 ]
 ```
 
-## Scripts
+## Scripts (optional)
 
-- `scripts/txt_to_bilingual_json.py`: Split/merge sentences and generate the bilingual JSON skeleton.
+- `scripts/txt_to_bilingual_json.py`: Use only when the input is clean, well-punctuated prose. Avoid for transcript-style text with broken lines or fragmentary captions.
