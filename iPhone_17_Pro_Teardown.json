@@ -1,0 +1,410 @@
+[
+  {
+    "en": "As an Android user, the more I learn about this iPhone 17 Pro, the more I like it.",
+    "zh": "作为一个安卓用户，我越了解这台 iPhone 17 Pro，就越喜欢它。"
+  },
+  {
+    "en": "Rumor is that this orange iPhone 17 Pro has a new vapor chamber inside, and it's surprisingly repairable, with an asterisk, of course.",
+    "zh": "传闻这台橙色的 iPhone 17 Pro 内部有新的均热板，而且出奇地好修，当然要打个星号。"
+  },
+  {
+    "en": "My new toolkit collab with iFixit has 32 high-precision bits inside, and knowing Apple, I'll probably have to use all of them.",
+    "zh": "我和 iFixit 联名的新工具包里有 32 个高精度批头，按苹果的风格，我大概得全部用上。"
+  },
+  {
+    "en": "The most commonly repaired components, like the screen and the battery, are going to be accessible from the front.",
+    "zh": "最常见需要维修的部件，比如屏幕和电池，将会从正面就能拆到。"
+  },
+  {
+    "en": "But since the back panel is made from glass, and as we know, glass is glass, let's pop that off first to see how hard it'll be to fix.",
+    "zh": "不过既然后盖是玻璃的，而我们都知道，玻璃就是玻璃，先把它撬下来看看有多难修。"
+  },
+  {
+    "en": "One thing I didn't immediately realize or recognize is that Apple has found a rather ingenious way to tie both the back glass and the front glass into the same set of pentalobe screws at the bottom of the phone.",
+    "zh": "我一开始没意识到的是，苹果用了一种相当巧妙的方式，把后玻璃和前玻璃都固定在底部同一组五角螺丝上。"
+  },
+  {
+    "en": "So, as I'm heating up that back glass and carefully separating it from the aluminum frame with my suction cup and ultra-thin pry tool, taking out those bottom two screws first would have made my life a whole lot easier.",
+    "zh": "所以当我加热后玻璃，用吸盘和超薄撬片小心把它从铝框上分离时，如果先把底部两颗螺丝取下，会轻松很多。"
+  },
+  {
+    "en": "Learning from other people's mistakes, though, is quicker than making them all yourself.",
+    "zh": "从别人的错误里学，比自己全犯一遍快得多。"
+  },
+  {
+    "en": "So, I'm just helping future you out with your own repairs.",
+    "zh": "所以我只是帮未来的你省点事。"
+  },
+  {
+    "en": "With the back glass off, there's a thin ribbon cable in the upper left corner that connects the 25-watt wireless charger to the motherboard.",
+    "zh": "取下后玻璃后，左上角有一条细排线，把 25W 无线充电器连到主板。"
+  },
+  {
+    "en": "We don't know the official cost of these replacement pieces just yet, but since magnets lose about 1% of their strength every 10 years or so, pretty much all of these will need to be replaced by the year 3000.",
+    "zh": "这些替换件的官方价格还不清楚，但磁铁大约每 10 年衰减 1% 的磁力，所以到 3000 年这些基本都要换了。"
+  },
+  {
+    "en": "Just something to budget for.",
+    "zh": "算是给预算留个坑。"
+  },
+  {
+    "en": "Taking out the two pentalobe screws is easy.",
+    "zh": "拆掉这两颗五角螺丝很容易。"
+  },
+  {
+    "en": "Something I should have done first thing.",
+    "zh": "这本该是第一步。"
+  },
+  {
+    "en": "Another, you know, minorly catastrophic issue I had was that instead of lifting up as hard as I should have with the suction cup, I inserted my thin pry tool far too early and killed the screen.",
+    "zh": "另一个你知道的、小小灾难是：我没有用吸盘充分往上提，太早把薄撬片插进去，把屏幕干废了。"
+  },
+  {
+    "en": "It looks like I won't be joining the blue bubble gang after all.",
+    "zh": "看来我加入不了蓝色气泡阵营了。"
+  },
+  {
+    "en": "I'll show you the damage here in a second, but I should have lifted up on the screen until a gap was clearly visible and then gently worked my way around the edges after that to slice away the adhesive.",
+    "zh": "等下给你看损伤，但我应该先把屏幕抬到明显有缝，再沿边缘慢慢绕一圈切开胶。"
+  },
+  {
+    "en": "I'm obviously making these mistakes on purpose so as to demonstrate what not to do.",
+    "zh": "我显然是故意犯错来演示什么不该做的。"
+  },
+  {
+    "en": "This phone has given up the ghost so that others may live.",
+    "zh": "这台手机牺牲了自己，让他人得以生。"
+  },
+  {
+    "en": "And there are plenty of nifty little noteworthy nuggets that we can still find on the inside.",
+    "zh": "而且里面还有不少有趣的小细节可看。"
+  },
+  {
+    "en": "Luckily, if someone is removing the screen, there's a very good chance that it's already broken in the first place, so you won't have to worry as much about it surviving.",
+    "zh": "幸运的是，如果有人要拆屏，它很可能本来就已经碎了，所以你也不用太担心能不能完整取下。"
+  },
+  {
+    "en": "Apple, in their wisdom to make repairs easier and more foolproof, have copied a page out of the Pixel's textbook and included a barrier between where the screen sits and the rest of the phone, protecting the battery.",
+    "zh": "苹果为了让维修更简单更不容易失误，学了 Pixel 的思路，在屏幕与机身其余部分之间加了一道屏障来保护电池。"
+  },
+  {
+    "en": "It's way harder to break something when it's protected by metal.",
+    "zh": "有金属保护的东西更难被弄坏。"
+  },
+  {
+    "en": "I mean, look at Iron Man.",
+    "zh": "比如钢铁侠。"
+  },
+  {
+    "en": "You can see where I sliced into the screen on the lower portion when I inserted my tool in too early.",
+    "zh": "你能看到我在下方插得太早，把屏幕划开的地方。"
+  },
+  {
+    "en": "The screen has two ribbons on the left side with a Phillips head screw holding down the Lego-style ribbon connector.",
+    "zh": "屏幕左侧有两条排线，用一颗十字螺丝压着乐高式排线接口。"
+  },
+  {
+    "en": "This iPhone 17 Pro screen could be replaced by an experienced technician in about 2 minutes.",
+    "zh": "有经验的技师大概 2 分钟就能换好这块 iPhone 17 Pro 屏幕。"
+  },
+  {
+    "en": "Apple does now sell replacement parts directly to customers, which is pretty cool of them. Thumbs up for that.",
+    "zh": "苹果现在直接向用户卖替换件了，还挺酷的，给个赞。"
+  },
+  {
+    "en": "The front-facing camera and Face Unlock hardware is still inside the phone.",
+    "zh": "前置相机和面容解锁硬件还在机内。"
+  },
+  {
+    "en": "Something I've always wished these cameras could do, though, is take a picture of anyone who's attempted to unlock my phone without my permission.",
+    "zh": "我一直希望这些相机能拍下那些未经许可试图解锁我手机的人。"
+  },
+  {
+    "en": "You know, for an extra layer of security.",
+    "zh": "你懂的，多一层安全。"
+  },
+  {
+    "en": "Luckily, my favorite security app and the sponsor of today's video, Bit Defender, is able to do exactly that.",
+    "zh": "好在我最喜欢的安全应用、也是今天视频赞助商 Bit Defender 就能做到。"
+  },
+  {
+    "en": "And you can try it free for 90 days.",
+    "zh": "还能免费试用 90 天。"
+  },
+  {
+    "en": "I'll remove the 17 screws around the metal sheet that protects the iPhone hardware.",
+    "zh": "我会拆掉保护 iPhone 硬件的金属板周围的 17 颗螺丝。"
+  },
+  {
+    "en": "Aside from protecting your device in the physical world, Bit Defender also protects you and your family in the digital realm.",
+    "zh": "除了在现实世界里保护设备，Bit Defender 还能在数字世界里保护你和你的家人。"
+  },
+  {
+    "en": "Bit Defender Premium Security comes with an unlimited VPN, password manager, real-time email protection, and my favorite feature, Scam Copilot.",
+    "zh": "Bit Defender Premium Security 附带无限 VPN、密码管理器、实时邮件保护，以及我最喜欢的功能 Scam Copilot。"
+  },
+  {
+    "en": "With a lot of regular humans thinking AI-generated videos and deepfakes are real, these scammers are getting crazy sophisticated.",
+    "zh": "很多普通人把 AI 生成视频和深度伪造当真，骗子越来越离谱。"
+  },
+  {
+    "en": "And the best way to bust AI-powered scams is with an AI-powered defense against online fraud.",
+    "zh": "对付 AI 诈骗最好的方式，就是用 AI 反诈。"
+  },
+  {
+    "en": "Scam Copilot is a clanker fighting with the good guys.",
+    "zh": "Scam Copilot 是为正义而战的小机器人。"
+  },
+  {
+    "en": "You can ask the Scam Copilot chatbot questions or send it screenshots to see if a text or email is a scam.",
+    "zh": "你可以问它问题，或发截图给它判断短信或邮件是不是诈骗。"
+  },
+  {
+    "en": "And he can protect five of your devices at the same time.",
+    "zh": "它还能同时保护你五台设备。"
+  },
+  {
+    "en": "You don't gotta to take my word for it, though.",
+    "zh": "不过你也不用只听我说。"
+  },
+  {
+    "en": "Bit Defender is a global leader in cybersecurity, and millions of people around the world trust Bit Defender with their data.",
+    "zh": "Bit Defender 是全球网络安全领导者，数百万用户信任它保护数据。"
+  },
+  {
+    "en": "And thanks to the link in the description, you can try it free for 90 days.",
+    "zh": "通过简介里的链接还能免费试用 90 天。"
+  },
+  {
+    "en": "With the 17 T5 Torx screws gone and the Phillips head screw holding the bracket on top of the battery plug removed, we can lift off the shield between the screen and the phone's internal hardware where the battery is.",
+    "zh": "拆掉 17 颗 T5 梅花螺丝和固定电池接口支架的十字螺丝后，我们就能抬起屏幕与电池之间的护罩。"
+  },
+  {
+    "en": "Wait, the battery is missing. Oh, there it is.",
+    "zh": "等等，电池不见了。哦，在这儿。"
+  },
+  {
+    "en": "It's attached to the mid-frame.",
+    "zh": "它连在中框上。"
+  },
+  {
+    "en": "I'm shocked at how reasonable Apple is being with this whole repairability thing.",
+    "zh": "我很惊讶苹果在可维修性上竟然这么讲理。"
+  },
+  {
+    "en": "If Apple sells this battery already attached to the tray, this is actually a pretty chill repair.",
+    "zh": "如果苹果卖的电池已经带托盘，那这维修就相当轻松。"
+  },
+  {
+    "en": "Assuming, of course, you can get the screen off in one piece. I believe in you.",
+    "zh": "当然前提是你能把屏幕完整拆下来。我相信你。"
+  },
+  {
+    "en": "This is the same style of metal-enclosed battery we saw last year with the electrically de-bonding adhesive strip under the metal case.",
+    "zh": "这跟我们去年看到的一样，是金属包裹电池，下面还有电解除粘胶条。"
+  },
+  {
+    "en": "The metal case around the battery adds an extra layer of protection against puncturing, which as we saw on the Pixel 10 Pro Fold, can be a pretty smoky experience.",
+    "zh": "电池外壳的金属层多一层防刺穿保护，就像我们在 Pixel 10 Pro Fold 上看到的，刺穿会冒烟。"
+  },
+  {
+    "en": "The mid-frame also has the first ever Apple Vapor Chamber attached to it.",
+    "zh": "中框上还装了苹果史上首个均热板。"
+  },
+  {
+    "en": "This vapor chamber sits on top of the new A19 processor and keeps it cool so you can scroll through fire memes more efficiently.",
+    "zh": "这块均热板位于新的 A19 处理器上方，负责降温，让你刷火梗更顺滑。"
+  },
+  {
+    "en": "If the chip overheats, it will throttle performance.",
+    "zh": "芯片过热会降频。"
+  },
+  {
+    "en": "Peeling back the graphite layer reveals that we still can't access the vapor chamber without pulling off the battery first.",
+    "zh": "揭开石墨层后发现，不先拆电池还是无法接触均热板。"
+  },
+  {
+    "en": "The vapor chamber appears to be very much a permanent part of that midframe, though.",
+    "zh": "不过均热板似乎是中框的永久部件。"
+  },
+  {
+    "en": "Android users have been familiar with these things for the past 9 years.",
+    "zh": "安卓用户对这玩意儿已经熟悉 9 年了。"
+  },
+  {
+    "en": "Samsung's had one in their phones since the Galaxy S7 back in 2016.",
+    "zh": "三星从 2016 年的 Galaxy S7 就开始用了。"
+  },
+  {
+    "en": "But for the Apple users just joining the party, the way a vapor chamber works is that a small drop of water gets inserted inside the chamber and sealed up at the factory.",
+    "zh": "对刚入坑的苹果用户来说，均热板的原理是：工厂里把一小滴水注入腔体并密封。"
+  },
+  {
+    "en": "You can see the little droplets of liquid still inside the chamber.",
+    "zh": "你还能看到腔体里残留的液滴。"
+  },
+  {
+    "en": "Then as the processor heats up that drop of liquid, it evaporates, taking a lot of the heat energy at the hot end of the vapor chamber, traveling to the other side, condensing back into liquid, dispersing its heat, and gets ready to repeat the process.",
+    "zh": "当处理器把那滴水加热后，它蒸发带走热端的大量热量，跑到另一侧冷凝回液体，散掉热，再回到热端循环。"
+  },
+  {
+    "en": "Very similar to how an air conditioner uses phase change to cool down your house.",
+    "zh": "这和空调用相变降温很像。"
+  },
+  {
+    "en": "The metal mesh inside helps wick that liquid back to the hot end so it can happen over and over.",
+    "zh": "内部金属网帮助把液体回吸到热端，让循环不断发生。"
+  },
+  {
+    "en": "Between the charging coil, metal battery, and new-age vapor chamber, the iPhone 17 Pro is turning out to be even cooler on the inside than it is on the outside.",
+    "zh": "在充电线圈、金属电池和新式均热板之间，iPhone 17 Pro 的内部比外观还要酷。"
+  },
+  {
+    "en": "Switching over to our fourth screwdriver bit, a flathead to remove the standoff screw.",
+    "zh": "换到第四个批头，用一字批拆定位螺丝。"
+  },
+  {
+    "en": "These are basically a screw for holding a screw.",
+    "zh": "这基本就是用来固定螺丝的螺丝。"
+  },
+  {
+    "en": "A screw within a screw.",
+    "zh": "螺丝里的螺丝。"
+  },
+  {
+    "en": "A \"screw-ception\" where one screw screws into another screw for holding multiple layers of components.",
+    "zh": "所谓“螺丝-ception”，一颗螺丝拧进另一颗螺丝里固定多层组件。"
+  },
+  {
+    "en": "With the standoff screws removed, we can pop out the Taptic Engine vibrator.",
+    "zh": "拆掉定位螺丝后，我们可以取出 Taptic Engine 震动马达。"
+  },
+  {
+    "en": "I do have a full vibrator review coming out soon, so keep an eye out for that one.",
+    "zh": "我还有个完整的振子评测即将上线，敬请关注。"
+  },
+  {
+    "en": "I did some counting after this tear down was all over, and there are more than 70 different-sized screws in this iPhone 17 Pro, so forgive me if I don't mark the location of all of them this time around.",
+    "zh": "拆机结束后我数了数，这台 iPhone 17 Pro 有 70 多种不同规格的螺丝，所以这次就不标位置了，见谅。"
+  },
+  {
+    "en": "If you ever happen to find yourself this deep in an iPhone 17 Pro, you need way more help than I can give or an exorcist.",
+    "zh": "如果你真把自己拆到这种深度，你需要的帮助比我能提供的多，或者需要个驱魔师。"
+  },
+  {
+    "en": "The front-facing camera has the new square sensor inside.",
+    "zh": "前置相机里有新的方形传感器。"
+  },
+  {
+    "en": "We ripped one of these open in the iPhone Air tear-down.",
+    "zh": "我们在 iPhone Air 拆机里已经拆过一个。"
+  },
+  {
+    "en": "So, if you want to see the sensor, you can check out that video.",
+    "zh": "想看传感器的话可以去看那期。"
+  },
+  {
+    "en": "The rear-facing cameras are all 48 megapixels and tied together in one large housing.",
+    "zh": "后置三摄都是 4800 万像素，集成在一个大模组里。"
+  },
+  {
+    "en": "Neither the ultra-wide, the telephoto, nor the main camera have exterior optical image stabilization, but the main camera and telephoto both have sensor shift stabilization on the inside, which is just as, if not more capable than regular OIS.",
+    "zh": "超广角、长焦和主摄都没有外置光学防抖，但主摄和长焦都有内置传感器位移防抖，性能不输甚至更强于传统 OIS。"
+  },
+  {
+    "en": "Sensor shift is still a physical form of stabilization.",
+    "zh": "传感器位移仍是物理防抖。"
+  },
+  {
+    "en": "The upper loudspeaker does look pretty normal.",
+    "zh": "上方扬声器看起来很普通。"
+  },
+  {
+    "en": "Remember, the iPhone Air does not have stereo speakers, while the iPhone 17 Pro does.",
+    "zh": "记住，iPhone Air 没有立体声扬声器，而 iPhone 17 Pro 有。"
+  },
+  {
+    "en": "It does not however have any windows where we could see the balls inside, which means we have to bust them open instead.",
+    "zh": "但它没有窗户能看到里面的小球，所以只能拆开看看。"
+  },
+  {
+    "en": "And indeed we do find balls inside.",
+    "zh": "而且确实有小球。"
+  },
+  {
+    "en": "These give the speaker sound waves something to bounce off of inside the box so the tiny speaker doesn't sound like a tin can.",
+    "zh": "这些球给箱体内的声波提供反射面，让小扬声器不至于像铁罐。"
+  },
+  {
+    "en": "Balls make little speakers sound bigger and more full than they actually are.",
+    "zh": "小球能让小扬声器听起来更大、更饱满。"
+  },
+  {
+    "en": "After a bunch more screws are removed, I can pull away the motherboard with its new A19 chip in it.",
+    "zh": "再拆一堆螺丝后，我可以把主板连同新的 A19 芯片取下。"
+  },
+  {
+    "en": "It's always shocking how tiny these things are.",
+    "zh": "这些东西有多小总让我惊讶。"
+  },
+  {
+    "en": "The whole board is about the size of a quarter or whatever coin this is.",
+    "zh": "整块板大概就一枚硬币大小。"
+  },
+  {
+    "en": "Sorry if I forget your name.",
+    "zh": "抱歉如果我忘了你的名字。"
+  },
+  {
+    "en": "I'm from the USA and we only care about Argentina for some reason.",
+    "zh": "我来自美国，我们只关心阿根廷，原因不明。"
+  },
+  {
+    "en": "Finally, the last thing to come out of the phone is the charging port.",
+    "zh": "最后从手机里拿出的就是充电口。"
+  },
+  {
+    "en": "And for some reason, Apple has more screws holding in this singular port than Samsung uses in their whole phone.",
+    "zh": "而苹果用来固定这一个接口的螺丝，比三星一整部手机还多。"
+  },
+  {
+    "en": "I do not understand it.",
+    "zh": "我无法理解。"
+  },
+  {
+    "en": "The lower loudspeaker also has balls inside, which is nifty. And there you go.",
+    "zh": "下方扬声器里也有小球，挺妙。好了就是这样。"
+  },
+  {
+    "en": "The whole iPhone torn down with its aluminum body, an antenna line around the camera plateau.",
+    "zh": "整台 iPhone 拆完后，铝合金机身，摄像头平台周围的天线线条都在这。"
+  },
+  {
+    "en": "I think this is by far the coolest and most capable iPhone Apple has ever made.",
+    "zh": "我认为这是苹果做过最酷、最强的 iPhone。"
+  },
+  {
+    "en": "All of the main repairs are simple enough, like the screen, the back glass, and the battery.",
+    "zh": "主要维修都很简单，比如屏幕、后玻璃和电池。"
+  },
+  {
+    "en": "And if I was going to switch, this would be the one I would buy.",
+    "zh": "如果我要转阵营，这就是我会买的那台。"
+  },
+  {
+    "en": "If I'm not going to switch, but if I was, I'm just thinking about it.",
+    "zh": "如果我不打算换，但如果要换的话，我只是想想而已。"
+  },
+  {
+    "en": "Grab one of my tool kits for your future self down in the description.",
+    "zh": "去简介里给未来的你买一套我的工具包吧。"
+  },
+  {
+    "en": "And don't forget your free 90 days worth of Bit Defender so you can keep yourself secure both at home and abroad.",
+    "zh": "别忘了通过 Bit Defender 的免费 90 天，出门在外和在家都能保持安全。"
+  },
+  {
+    "en": "Thanks a ton for watching.",
+    "zh": "非常感谢观看。"
+  }
+]

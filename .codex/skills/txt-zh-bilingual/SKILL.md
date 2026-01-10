@@ -11,24 +11,37 @@ Convert English `.txt` files into bilingual JSON arrays, with sentence splitting
 
 ## Workflow
 
-### 1. Prepare sentence segments (AI-guided)
+### 1. Translate the full text first (AI-guided)
 
-Read the `.txt` file and manually build sentence segments in context instead of relying on the script. The source text may contain line breaks, captions, or fragments that are not full sentences, so reconstruct coherent English sentences before translation.
+Read the entire `.txt` file and produce a coherent, natural Chinese translation of the full content. Fix line breaks, captions, or fragmentary lines in Chinese so the narrative flows.
+
+Guidelines:
+- Preserve tone, pacing, and speaker intent.
+- Keep technical terms and product names consistent.
+- Do not force sentence-by-sentence alignment at this stage.
+
+### 2. Build English sentence segments
+
+Reconstruct complete English sentences from the raw lines. Merge broken fragments and normalize punctuation.
 
 Guidelines:
 - Merge fragments split by newlines into complete sentences when they belong together.
 - Preserve intentional short lines only when they are standalone utterances (e.g., sound cues, one-word reactions, quoted asides).
 - If a line is obviously a continuation (starts with conjunctions like "and", "but", "so", or lowercase), merge it into the previous segment.
 - If punctuation is missing but the meaning clearly continues, merge until the thought completes.
-- Keep each `en` segment concise; split long sentences if they become unwieldy for translation.
+- Keep each `en` segment concise; split long sentences if they become unwieldy for listening practice.
 
-Create a JSON array where each object has `en` filled and `zh` empty.
+### 3. Align Chinese to English segments
 
-### 2. Translate each segment
+Split the full Chinese translation from Step 1 into segments that align with the English sentences from Step 2. Each `zh` entry should map cleanly to the corresponding `en` entry for listen-then-translate practice.
 
-Fill each `zh` field with a faithful Chinese translation of its corresponding `en` field. Keep meaning, tone, and technical terms consistent across the file.
+Alignment rules:
+- One `en` sentence maps to one `zh` sentence/segment.
+- If one English sentence requires multiple Chinese clauses, keep them within the same `zh` entry.
+- Avoid mixing content from different English sentences into one `zh` entry.
+- Prefer natural Chinese phrasing over word-for-word mapping, but keep information coverage aligned.
 
-### 3. Validate output format
+### 4. Validate output format
 
 Ensure the JSON is an array of objects like:
 
@@ -37,7 +50,3 @@ Ensure the JSON is an array of objects like:
   {"en": "Example sentence.", "zh": "示例句子。"}
 ]
 ```
-
-## Scripts (optional)
-
-- `scripts/txt_to_bilingual_json.py`: Use only when the input is clean, well-punctuated prose. Avoid for transcript-style text with broken lines or fragmentary captions.
