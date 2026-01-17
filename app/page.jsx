@@ -225,15 +225,21 @@ export default function HomePage() {
     if (!word) return null;
     const { lead, core, tail } = splitWord(word);
     const pivotIndex = Math.max(1, Math.ceil(core.length * 0.35)) - 1;
+    const leftText = core.slice(0, pivotIndex);
+    const rightText = core.slice(pivotIndex + 1);
     return (
-      <span className="inline-flex items-baseline font-display">
-        <span className="text-muted">{lead}</span>
-        <span>{core.slice(0, pivotIndex)}</span>
+      <span className="grid w-full grid-cols-[1fr_auto_1fr] items-baseline font-display">
+        <span className="text-right">
+          {lead ? <span className="text-muted">{lead}</span> : null}
+          {leftText}
+        </span>
         <span className="text-accent drop-shadow-[0_0_12px_rgba(243,92,74,0.35)]">
           {core.charAt(pivotIndex) || ""}
         </span>
-        <span>{core.slice(pivotIndex + 1)}</span>
-        <span className="text-muted">{tail}</span>
+        <span className="text-left">
+          {rightText}
+          {tail ? <span className="text-muted">{tail}</span> : null}
+        </span>
       </span>
     );
   };
@@ -352,9 +358,9 @@ export default function HomePage() {
         </button>
         <div className="relative flex flex-1 items-center justify-center px-6 py-10">
           <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-line opacity-50" />
-          <div className="text-center font-display text-5xl leading-none text-ink sm:text-7xl md:text-8xl">
+          <div className="w-full max-w-4xl text-5xl leading-none text-ink sm:text-7xl md:text-8xl">
             {currentWord ? renderWord(currentWord) : (
-              <p className="text-base italic text-muted">Load text to start reading.</p>
+              <p className="text-center text-base italic text-muted">Load text to start reading.</p>
             )}
           </div>
         </div>
