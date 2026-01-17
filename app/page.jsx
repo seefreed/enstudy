@@ -7,11 +7,12 @@ const DEFAULT_TEXT = "Paste text, upload a file, or fetch a URL to begin.";
 function extractWords(text) {
   const normalized = text
     .replace(/\u00a0/g, " ")
-    .replace(/[#()\-]/g, " ")
-    .replace(/[^A-Za-z'\s]/g, " ")
+    .replace(/[#()]/g, " ")
+    .replace(/[^A-Za-z'\s-]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
-  return normalized ? normalized.split(" ") : [];
+  const parts = normalized ? normalized.split(" ") : [];
+  return parts.filter((word) => /[A-Za-z]/.test(word));
 }
 
 function splitWord(word) {
@@ -183,9 +184,22 @@ export default function HomePage() {
     setIsPlaying((prev) => !prev);
   };
 
+  const restart = () => {
+    if (!total) {
+      setStatus("Load text first.");
+      return;
+    }
+    setIndex(0);
+    setIsPlaying(true);
+  };
+
   const reset = () => {
+    clearInterval(timerRef.current);
     setIndex(0);
     setIsPlaying(false);
+    setRawText("");
+    setUrlInput("");
+    setStatus("Ready.");
     setShowReader(false);
   };
 
@@ -330,8 +344,11 @@ export default function HomePage() {
                 </span>
               </div>
             </div>
+            <button type="button" className="restart-button" onClick={restart}>
+              Restart
+            </button>
             <button type="button" className="reset-button" onClick={reset}>
-              New file
+              Reset
             </button>
             <button
               type="button"

@@ -424,6 +424,23 @@ button {
   border-color: var(--text-primary);
 }
 
+.restart-button {
+  padding: 0.6rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  background: transparent;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.restart-button:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
 .theme-toggle {
   width: 42px;
   height: 42px;
