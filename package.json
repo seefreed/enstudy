@@ -1,0 +1,17 @@
+{
+  "name": "enstudy",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "14.2.5",
+    "pdfjs-dist": "4.4.168",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  }
+}
