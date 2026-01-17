@@ -33,6 +33,7 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showReader, setShowReader] = useState(false);
   const [theme, setTheme] = useState("dark");
+  const [showFullText, setShowFullText] = useState(false);
   const timerRef = useRef(null);
 
   const words = useMemo(() => extractWords(rawText), [rawText]);
@@ -86,6 +87,18 @@ export default function HomePage() {
     }
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setShowFullText(false);
+      }
+    };
+    if (showFullText) {
+      document.addEventListener("keydown", onKeyDown);
+    }
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [showFullText]);
 
   const handleText = (text) => {
     setRawText(text);
@@ -201,6 +214,7 @@ export default function HomePage() {
     setUrlInput("");
     setStatus("Ready.");
     setShowReader(false);
+    setShowFullText(false);
   };
 
   const toggleTheme = () => {
@@ -212,72 +226,96 @@ export default function HomePage() {
     const { lead, core, tail } = splitWord(word);
     const pivotIndex = Math.max(1, Math.ceil(core.length * 0.35)) - 1;
     return (
-      <span className="word">
-        <span className="word-lead">{lead}</span>
-        <span className="word-core">{core.slice(0, pivotIndex)}</span>
-        <span className="word-pivot">{core.charAt(pivotIndex) || ""}</span>
-        <span className="word-core">{core.slice(pivotIndex + 1)}</span>
-        <span className="word-tail">{tail}</span>
+      <span className="inline-flex items-baseline font-display">
+        <span className="text-muted">{lead}</span>
+        <span>{core.slice(0, pivotIndex)}</span>
+        <span className="text-accent drop-shadow-[0_0_12px_rgba(243,92,74,0.35)]">
+          {core.charAt(pivotIndex) || ""}
+        </span>
+        <span>{core.slice(pivotIndex + 1)}</span>
+        <span className="text-muted">{tail}</span>
       </span>
     );
   };
 
   return (
-    <main className="app">
-      <section className={`upload-screen ${showReader ? "hidden" : ""}`}>
-        <div className="upload-inner">
-          <div className="brand">
-            <p className="brand-label">Speed Reader</p>
-            <h1>Focus on one word at a time.</h1>
-            <p className="brand-subtitle">
+    <main className="min-h-screen">
+      <section
+        className={`fixed inset-0 flex items-center justify-center px-6 py-10 transition-all duration-300 ${
+          showReader ? "pointer-events-none scale-[0.98] opacity-0" : "opacity-100"
+        }`}
+      >
+        <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-10 md:grid-cols-[1.1fr_1fr] md:items-center">
+          <div className="grid gap-5">
+            <p className="text-xs uppercase tracking-[0.32em] text-muted">
+              Speed Reader
+            </p>
+            <h1 className="font-display text-4xl leading-tight text-ink md:text-6xl">
+              Focus on one word at a time.
+            </h1>
+            <p className="max-w-xl text-base text-muted">
               Upload a file, paste text, or fetch a URL. Clean, direct, and ready
               for reading.
             </p>
           </div>
-          <div className="upload-panel">
-            <div className="upload-header">
-              <h2>Upload</h2>
-              <span className={`status ${isLoading ? "pulse" : ""}`}>{status}</span>
+          <div className="grid gap-6 rounded-2xl border border-line bg-panel p-8 shadow-halo">
+            <div className="flex items-center justify-between font-display">
+              <h2 className="text-xl">Upload</h2>
+              <span className={`text-sm text-muted ${isLoading ? "animate-pulse" : ""}`}>
+                {status}
+              </span>
             </div>
-            <label className="upload-zone">
+            <label className="group relative grid cursor-pointer gap-2 rounded-xl border border-dashed border-line bg-soft px-6 py-6 text-center transition hover:border-accent hover:bg-[rgba(243,92,74,0.12)]">
               <input
                 type="file"
                 accept=".txt,.pdf,.md,text/plain,application/pdf,text/markdown"
                 onChange={handleFile}
                 disabled={isLoading}
+                className="absolute inset-0 cursor-pointer opacity-0"
               />
-              <div className="upload-icon">
-                <span>+</span>
+              <div className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-line text-2xl text-accent">
+                +
               </div>
-              <p>
+              <p className="text-sm text-muted">
                 Click to upload or drop a file<br />
                 .txt .md .pdf
               </p>
             </label>
-            <div className="upload-row">
+            <div className="grid gap-3 md:grid-cols-[1fr_auto]">
               <input
                 type="url"
                 placeholder="https://example.com/article"
                 value={urlInput}
                 onChange={(event) => setUrlInput(event.target.value)}
                 disabled={isLoading}
+                className="rounded-xl border border-line bg-soft px-4 py-3 text-sm text-ink placeholder:text-muted"
               />
-              <button type="button" onClick={fetchUrl} disabled={isLoading}>
+              <button
+                type="button"
+                onClick={fetchUrl}
+                disabled={isLoading}
+                className="rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
+              >
                 Fetch URL
               </button>
             </div>
             <textarea
-              className="text-area"
+              className="min-h-[120px] w-full resize-y rounded-xl border border-line bg-soft px-4 py-3 text-sm text-ink placeholder:text-muted"
               placeholder={DEFAULT_TEXT}
               value={rawText}
               onChange={(event) => setRawText(event.target.value)}
               rows={5}
             />
-            <div className="upload-actions">
-              <button type="button" onClick={handlePaste} disabled={isLoading}>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <button
+                type="button"
+                onClick={handlePaste}
+                disabled={isLoading}
+                className="rounded-full border border-accent px-6 py-2 text-sm font-semibold text-accent transition hover:border-ink hover:text-ink disabled:opacity-60"
+              >
                 Start reading
               </button>
-              <div className="meta">
+              <div className="flex gap-4 text-sm text-muted">
                 <span>{total} words</span>
                 <span>
                   {Math.max(index, 0) + 1} / {Math.max(total, 1)}
@@ -288,80 +326,103 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className={`reader-screen ${showReader ? "active" : ""}`}>
-        <div className="word-container">
-          <div className="word-display">
+      <section
+        className={`fixed inset-0 flex flex-col transition-opacity duration-300 ${
+          showReader ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+      >
+        <div className="absolute left-6 top-6 grid gap-1 text-xs uppercase tracking-[0.12em] text-muted">
+          <span>Word</span>
+          <span className="text-base font-medium normal-case text-ink">
+            {Math.min(index + 1, Math.max(total, 1))} / {Math.max(total, 1)}
+          </span>
+        </div>
+        <button
+          type="button"
+          className="absolute right-6 top-6 grid h-11 w-11 place-items-center rounded-xl border border-line bg-[rgba(18,22,30,0.6)] text-muted transition hover:-translate-y-0.5 hover:border-ink hover:text-ink"
+          onClick={() => setShowFullText(true)}
+          aria-label="Open full text"
+        >
+          <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-5 w-5 stroke-current">
+            <path d="M6 4h9l3 3v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" />
+            <path d="M14 4v4h4" />
+            <path d="M8 13h8" />
+            <path d="M8 17h6" />
+          </svg>
+        </button>
+        <div className="flex flex-1 items-center justify-center px-6 py-10">
+          <div className="text-center font-display text-5xl leading-none text-ink sm:text-7xl md:text-8xl">
             {currentWord ? renderWord(currentWord) : (
-              <p className="placeholder">Load text to start reading.</p>
+              <p className="text-base italic text-muted">Load text to start reading.</p>
             )}
           </div>
         </div>
-        <div className="controls">
-          <div className="progress-bar">
+        <div className="grid gap-6 border-t border-line bg-panel px-6 py-6 md:px-12">
+          <div className="h-0.5 w-full bg-line">
             <div
-              className="progress-fill"
-              style={{
-                width: total ? `${(index / total) * 100}%` : "0%"
-              }}
+              className="h-full bg-accent transition-[width] duration-100"
+              style={{ width: total ? `${(index / total) * 100}%` : "0%" }}
             />
           </div>
-          <div className="controls-row">
+          <div className="flex flex-wrap items-center gap-5">
             <button
               type="button"
-              className="play-button"
+              className="grid h-14 w-14 place-items-center rounded-full border border-ink text-ink transition hover:bg-ink hover:text-base"
               onClick={togglePlay}
               aria-label={isPlaying ? "Pause" : "Play"}
             >
               {isPlaying ? (
-                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2">
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-5 w-5 stroke-current">
                   <rect x="6" y="4" width="4" height="16" />
                   <rect x="14" y="4" width="4" height="16" />
                 </svg>
               ) : (
-                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2">
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-5 w-5 stroke-current">
                   <polygon points="5 3 19 12 5 21 5 3" />
                 </svg>
               )}
             </button>
-            <div className="speed-control">
-              <span className="speed-label">Speed</span>
+            <div className="flex min-w-[260px] flex-1 items-center gap-4">
+              <span className="text-xs uppercase tracking-[0.12em] text-muted">Speed</span>
               <input
                 type="range"
-                className="speed-slider"
+                className="range-slider flex-1"
                 min="120"
                 max="800"
                 step="10"
                 value={wpm}
                 onChange={(event) => setWpm(Number(event.target.value))}
               />
-              <span className="speed-value">{wpm} WPM</span>
+              <span className="min-w-[90px] text-right text-sm font-semibold text-accent">
+                {wpm} WPM
+              </span>
             </div>
-            <div className="stats">
-              <div className="stat-item">
-                <span className="stat-label">Word</span>
-                <span className="stat-value">
-                  {Math.min(index + 1, Math.max(total, 1))} / {Math.max(total, 1)}
-                </span>
-              </div>
-            </div>
-            <button type="button" className="restart-button" onClick={restart}>
+            <button
+              type="button"
+              className="rounded-full border border-accent px-4 py-2 text-xs uppercase tracking-[0.12em] text-accent transition hover:border-ink hover:text-ink"
+              onClick={restart}
+            >
               Restart
             </button>
-            <button type="button" className="reset-button" onClick={reset}>
+            <button
+              type="button"
+              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-[0.12em] text-muted transition hover:border-ink hover:text-ink"
+              onClick={reset}
+            >
               Reset
             </button>
             <button
               type="button"
-              className="theme-toggle"
+              className="grid h-10 w-10 place-items-center rounded-full border border-line text-muted transition hover:border-ink hover:text-ink"
               onClick={toggleTheme}
               aria-label="Toggle theme"
             >
               {theme === "light" ? (
-                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2">
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-4 w-4 stroke-current">
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                 </svg>
               ) : (
-                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2">
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-4 w-4 stroke-current">
                   <circle cx="12" cy="12" r="5" />
                   <line x1="12" y1="1" x2="12" y2="3" />
                   <line x1="12" y1="21" x2="12" y2="23" />
@@ -375,18 +436,50 @@ export default function HomePage() {
               )}
             </button>
           </div>
-          <div className="scrub">
-            <input
-              type="range"
-              min="0"
-              max={Math.max(total - 1, 0)}
-              value={Math.min(index, Math.max(total - 1, 0))}
-              onChange={(event) => setIndex(Number(event.target.value))}
-              disabled={!total}
-            />
-          </div>
+          <input
+            type="range"
+            min="0"
+            max={Math.max(total - 1, 0)}
+            value={Math.min(index, Math.max(total - 1, 0))}
+            onChange={(event) => setIndex(Number(event.target.value))}
+            disabled={!total}
+            className="range-slider w-full"
+          />
         </div>
       </section>
+
+      {showFullText ? (
+        <div
+          className="fixed inset-0 z-10 grid place-items-center bg-[radial-gradient(circle_at_top,rgba(20,24,35,0.95),rgba(6,9,14,0.9))] px-6 py-10 backdrop-blur"
+          onClick={() => setShowFullText(false)}
+        >
+          <div
+            className="grid max-h-[82vh] w-full max-w-3xl gap-4 rounded-2xl border border-white/10 bg-[linear-gradient(160deg,rgba(30,36,50,0.95),rgba(18,22,32,0.98))] p-7 shadow-halo"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between font-display">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-muted">Full text</p>
+                <h2 className="text-2xl text-ink">Reading source</h2>
+              </div>
+              <button
+                type="button"
+                className="grid h-10 w-10 place-items-center rounded-xl border border-line text-muted transition hover:border-ink hover:text-ink"
+                onClick={() => setShowFullText(false)}
+                aria-label="Close"
+              >
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-4 w-4 stroke-current">
+                  <path d="M18 6 6 18" />
+                  <path d="M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="max-h-[60vh] overflow-y-auto rounded-2xl border border-white/5 bg-[rgba(9,12,18,0.6)] p-5 text-sm leading-7 text-muted whitespace-pre-wrap">
+              {rawText.trim() ? rawText : DEFAULT_TEXT}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }
