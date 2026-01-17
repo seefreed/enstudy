@@ -367,7 +367,7 @@ export default function HomePage() {
           <div className="flex flex-wrap items-center gap-5">
             <button
               type="button"
-              className="grid h-14 w-14 place-items-center rounded-full border border-ink text-ink transition hover:bg-ink hover:text-base"
+              className="grid h-14 w-14 place-items-center rounded-full border border-ink text-ink transition hover:bg-ink hover:text-[color:var(--base)]"
               onClick={togglePlay}
               aria-label={isPlaying ? "Pause" : "Play"}
             >
@@ -397,44 +397,58 @@ export default function HomePage() {
                 {wpm} WPM
               </span>
             </div>
-            <button
-              type="button"
-              className="rounded-full border border-accent px-4 py-2 text-xs uppercase tracking-[0.12em] text-accent transition hover:border-ink hover:text-ink"
-              onClick={restart}
-            >
-              Restart
-            </button>
-            <button
-              type="button"
-              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-[0.12em] text-muted transition hover:border-ink hover:text-ink"
-              onClick={reset}
-            >
-              Reset
-            </button>
-            <button
-              type="button"
-              className="grid h-10 w-10 place-items-center rounded-full border border-line text-muted transition hover:border-ink hover:text-ink"
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-            >
-              {theme === "light" ? (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="group grid h-10 w-10 place-items-center rounded-full border border-line text-muted transition hover:border-ink hover:text-ink"
+                onClick={restart}
+                aria-label="Restart"
+                title="Restart"
+              >
                 <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-4 w-4 stroke-current">
-                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                  <path d="M3 12a9 9 0 1 0 3-6.7" />
+                  <path d="M3 4v4h4" />
                 </svg>
-              ) : (
+              </button>
+              <button
+                type="button"
+                className="group grid h-10 w-10 place-items-center rounded-full border border-line text-muted transition hover:border-ink hover:text-ink"
+                onClick={reset}
+                aria-label="Reset"
+                title="Reset"
+              >
                 <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-4 w-4 stroke-current">
-                  <circle cx="12" cy="12" r="5" />
-                  <line x1="12" y1="1" x2="12" y2="3" />
-                  <line x1="12" y1="21" x2="12" y2="23" />
-                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                  <line x1="1" y1="12" x2="3" y2="12" />
-                  <line x1="21" y1="12" x2="23" y2="12" />
-                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                  <path d="M4 4h16" />
+                  <path d="M10 4V2h4v2" />
+                  <path d="M6 4l1 16a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-16" />
                 </svg>
-              )}
-            </button>
+              </button>
+              <button
+                type="button"
+                className="grid h-10 w-10 place-items-center rounded-full border border-line text-muted transition hover:border-ink hover:text-ink"
+                onClick={toggleTheme}
+                aria-label="Toggle theme"
+                title="Toggle theme"
+              >
+                {theme === "light" ? (
+                  <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-4 w-4 stroke-current">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-4 w-4 stroke-current">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
           <input
             type="range"
