@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+
 const DEFAULT_TEXT = "Paste text, upload a file, or fetch a URL to begin.";
 
 function extractWords(text) {
   const normalized = text
-    .replace(/\s+/g, " ")
     .replace(/\u00a0/g, " ")
+    .replace(/[#()\-]/g, " ")
+    .replace(/[^A-Za-z'\s]/g, " ")
+    .replace(/\s+/g, " ")
     .trim();
   return normalized ? normalized.split(" ") : [];
 }
@@ -21,18 +24,19 @@ function splitWord(word) {
 
 export default function HomePage() {
   const [rawText, setRawText] = useState("");
-  const [wpm, setWpm] = useState(320);
+  const [wpm, setWpm] = useState(200);
   const [index, setIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [status, setStatus] = useState("Ready.");
   const [urlInput, setUrlInput] = useState("");
-  const [groupSize, setGroupSize] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [showReader, setShowReader] = useState(false);
+  const [theme, setTheme] = useState("dark");
   const timerRef = useRef(null);
 
   const words = useMemo(() => extractWords(rawText), [rawText]);
   const total = words.length;
-  const currentChunk = words.slice(index, index + groupSize);
+  const currentWord = words[index];
 
   useEffect(() => {
     if (!isPlaying || total === 0) {
@@ -42,7 +46,7 @@ export default function HomePage() {
     const delay = Math.max(60, Math.round(60000 / wpm));
     timerRef.current = setInterval(() => {
       setIndex((prev) => {
-        const next = prev + groupSize;
+        const next = prev + 1;
         if (next >= total) {
           setIsPlaying(false);
           return prev;
@@ -54,7 +58,7 @@ export default function HomePage() {
     return () => {
       clearInterval(timerRef.current);
     };
-  }, [isPlaying, wpm, total, groupSize]);
+  }, [isPlaying, wpm, total]);
 
   useEffect(() => {
     if (index >= total && total > 0) {
@@ -63,10 +67,30 @@ export default function HomePage() {
     }
   }, [total, index]);
 
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (saved === "light" || saved === "dark") {
+      setTheme(saved);
+    } else {
+      setTheme(prefersDark ? "dark" : "light");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (theme === "light") {
+      document.documentElement.setAttribute("data-theme", "light");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
   const handleText = (text) => {
     setRawText(text);
     setIndex(0);
     setIsPlaying(false);
+    setShowReader(true);
   };
 
   const handleFile = async (event) => {
@@ -148,6 +172,7 @@ export default function HomePage() {
     setIndex(0);
     setIsPlaying(false);
     setStatus("Text ready.");
+    setShowReader(true);
   };
 
   const togglePlay = () => {
@@ -161,9 +186,15 @@ export default function HomePage() {
   const reset = () => {
     setIndex(0);
     setIsPlaying(false);
+    setShowReader(false);
+  };
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
   const renderWord = (word) => {
+    if (!word) return null;
     const { lead, core, tail } = splitWord(word);
     const pivotIndex = Math.max(1, Math.ceil(core.length * 0.35)) - 1;
     return (
@@ -178,34 +209,38 @@ export default function HomePage() {
   };
 
   return (
-    <main className="page">
-      <header className="hero">
-        <div className="hero-text">
-          <p className="eyebrow">Speed Reader Studio</p>
-          <h1>
-            Read faster without losing the rhythm. Upload, tune, and flow.
-          </h1>
-          <p className="lede">
-            Drop in a text file, a PDF, or pull in a web article. Control the
-            tempo, group words, and stay in the zone.
-          </p>
-        </div>
-        <div className="hero-card">
-          <div className="card-head">
-            <h2>Source</h2>
-            <span className={`status ${isLoading ? "pulse" : ""}`}>{status}</span>
+    <main className="app">
+      <section className={`upload-screen ${showReader ? "hidden" : ""}`}>
+        <div className="upload-inner">
+          <div className="brand">
+            <p className="brand-label">Speed Reader</p>
+            <h1>Focus on one word at a time.</h1>
+            <p className="brand-subtitle">
+              Upload a file, paste text, or fetch a URL. Clean, direct, and ready
+              for reading.
+            </p>
           </div>
-          <div className="input-grid">
-            <label className="file-input">
+          <div className="upload-panel">
+            <div className="upload-header">
+              <h2>Upload</h2>
+              <span className={`status ${isLoading ? "pulse" : ""}`}>{status}</span>
+            </div>
+            <label className="upload-zone">
               <input
                 type="file"
-                accept=".txt,.pdf,text/plain,application/pdf"
+                accept=".txt,.pdf,.md,text/plain,application/pdf,text/markdown"
                 onChange={handleFile}
                 disabled={isLoading}
               />
-              <span>Upload file</span>
+              <div className="upload-icon">
+                <span>+</span>
+              </div>
+              <p>
+                Click to upload or drop a file<br />
+                .txt .md .pdf
+              </p>
             </label>
-            <div className="url-input">
+            <div className="upload-row">
               <input
                 type="url"
                 placeholder="https://example.com/article"
@@ -217,80 +252,113 @@ export default function HomePage() {
                 Fetch URL
               </button>
             </div>
-          </div>
-          <textarea
-            className="text-area"
-            placeholder={DEFAULT_TEXT}
-            value={rawText}
-            onChange={(event) => setRawText(event.target.value)}
-            rows={6}
-          />
-          <div className="card-actions">
-            <button type="button" onClick={handlePaste} disabled={isLoading}>
-              Use pasted text
-            </button>
-            <div className="meta">
-              <span>{total} words</span>
-              <span>{Math.max(index, 0) + 1} / {Math.max(total, 1)}</span>
+            <textarea
+              className="text-area"
+              placeholder={DEFAULT_TEXT}
+              value={rawText}
+              onChange={(event) => setRawText(event.target.value)}
+              rows={5}
+            />
+            <div className="upload-actions">
+              <button type="button" onClick={handlePaste} disabled={isLoading}>
+                Start reading
+              </button>
+              <div className="meta">
+                <span>{total} words</span>
+                <span>
+                  {Math.max(index, 0) + 1} / {Math.max(total, 1)}
+                </span>
+              </div>
             </div>
           </div>
         </div>
-      </header>
+      </section>
 
-      <section className="reader-panel">
-        <div className="reader">
-          <div className="reader-window">
-            {currentChunk.length ? (
-              <div className="word-stack">
-                {currentChunk.map((word, idx) => (
-                  <div className="word-line" key={`${word}-${idx}`}>
-                    {renderWord(word)}
-                  </div>
-                ))}
-              </div>
-            ) : (
+      <section className={`reader-screen ${showReader ? "active" : ""}`}>
+        <div className="word-container">
+          <div className="word-display">
+            {currentWord ? renderWord(currentWord) : (
               <p className="placeholder">Load text to start reading.</p>
             )}
           </div>
-          <div className="controls">
-            <div className="control-group">
-              <label>
-                WPM
-                <input
-                  type="range"
-                  min="120"
-                  max="800"
-                  step="10"
-                  value={wpm}
-                  onChange={(event) => setWpm(Number(event.target.value))}
-                />
-              </label>
-              <span className="control-value">{wpm}</span>
-            </div>
-            <div className="control-group">
-              <label>
-                Group size
-                <input
-                  type="range"
-                  min="1"
-                  max="4"
-                  step="1"
-                  value={groupSize}
-                  onChange={(event) => setGroupSize(Number(event.target.value))}
-                />
-              </label>
-              <span className="control-value">{groupSize}</span>
-            </div>
-            <div className="control-buttons">
-              <button type="button" onClick={togglePlay}>
-                {isPlaying ? "Pause" : "Play"}
-              </button>
-              <button type="button" onClick={reset}>
-                Reset
-              </button>
-            </div>
+        </div>
+        <div className="controls">
+          <div className="progress-bar">
+            <div
+              className="progress-fill"
+              style={{
+                width: total ? `${(index / total) * 100}%` : "0%"
+              }}
+            />
           </div>
-          <div className="progress">
+          <div className="controls-row">
+            <button
+              type="button"
+              className="play-button"
+              onClick={togglePlay}
+              aria-label={isPlaying ? "Pause" : "Play"}
+            >
+              {isPlaying ? (
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2">
+                  <rect x="6" y="4" width="4" height="16" />
+                  <rect x="14" y="4" width="4" height="16" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+              )}
+            </button>
+            <div className="speed-control">
+              <span className="speed-label">Speed</span>
+              <input
+                type="range"
+                className="speed-slider"
+                min="120"
+                max="800"
+                step="10"
+                value={wpm}
+                onChange={(event) => setWpm(Number(event.target.value))}
+              />
+              <span className="speed-value">{wpm} WPM</span>
+            </div>
+            <div className="stats">
+              <div className="stat-item">
+                <span className="stat-label">Word</span>
+                <span className="stat-value">
+                  {Math.min(index + 1, Math.max(total, 1))} / {Math.max(total, 1)}
+                </span>
+              </div>
+            </div>
+            <button type="button" className="reset-button" onClick={reset}>
+              New file
+            </button>
+            <button
+              type="button"
+              className="theme-toggle"
+              onClick={toggleTheme}
+              aria-label="Toggle theme"
+            >
+              {theme === "light" ? (
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2">
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              )}
+            </button>
+          </div>
+          <div className="scrub">
             <input
               type="range"
               min="0"
@@ -301,22 +369,6 @@ export default function HomePage() {
             />
           </div>
         </div>
-        <aside className="notes">
-          <h3>Flow tips</h3>
-          <ul>
-            <li>Start slow, then climb 50 WPM at a time.</li>
-            <li>Use group size 2-3 for familiar material.</li>
-            <li>Reset to revisit tricky paragraphs.</li>
-          </ul>
-          <div className="mini">
-            <p>Preview</p>
-            <p className="preview-text">
-              {rawText.trim()
-                ? rawText.trim().slice(0, 240) + (rawText.length > 240 ? "..." : "")
-                : DEFAULT_TEXT}
-            </p>
-          </div>
-        </aside>
       </section>
     </main>
   );

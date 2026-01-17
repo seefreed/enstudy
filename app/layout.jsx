@@ -1,15 +1,15 @@
 import "./globals.css";
-import { Literata, Unbounded } from "next/font/google";
+import { DM_Sans, Outfit } from "next/font/google";
 
-const display = Unbounded({
+const display = Outfit({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-display"
 });
 
-const body = Literata({
+const body = DM_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "500", "700"],
   variable: "--font-body"
 });
 
