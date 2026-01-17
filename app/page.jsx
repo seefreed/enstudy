@@ -350,7 +350,8 @@ export default function HomePage() {
             <path d="M8 17h6" />
           </svg>
         </button>
-        <div className="flex flex-1 items-center justify-center px-6 py-10">
+        <div className="relative flex flex-1 items-center justify-center px-6 py-10">
+          <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-line opacity-50" />
           <div className="text-center font-display text-5xl leading-none text-ink sm:text-7xl md:text-8xl">
             {currentWord ? renderWord(currentWord) : (
               <p className="text-base italic text-muted">Load text to start reading.</p>
