@@ -22,6 +22,7 @@ export default function ABLoopPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLooping, setIsLooping] = useState(true);
   const [playbackRate, setPlaybackRate] = useState(1);
+  const [theme, setTheme] = useState("dark");
   const audioRef = useRef(null);
   const objectUrlRef = useRef(null);
 
@@ -32,7 +33,23 @@ export default function ABLoopPage() {
     const audio = audioRef.current;
     if (!audio) return;
     audio.playbackRate = playbackRate;
+    audio.defaultPlaybackRate = playbackRate;
   }, [playbackRate]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("abloop-theme");
+    const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
+    if (saved === "light" || saved === "dark") {
+      setTheme(saved);
+    } else {
+      setTheme(prefersLight ? "light" : "dark");
+    }
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("abloop-theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -95,6 +112,10 @@ export default function ABLoopPage() {
     setAPoint(0);
     setBPoint(0);
     setIsPlaying(false);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = playbackRate;
+      audioRef.current.defaultPlaybackRate = playbackRate;
+    }
     event.target.value = "";
   };
 
@@ -141,13 +162,13 @@ export default function ABLoopPage() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-ink text-cream">
-      <div className="absolute inset-0 bg-gradient-to-br from-ink via-ink to-[#0f1a24]" />
-      <div className="pointer-events-none absolute -left-20 top-20 h-72 w-72 rounded-full bg-[#ff784f]/20 blur-3xl" />
-      <div className="pointer-events-none absolute -right-20 bottom-10 h-72 w-72 rounded-full bg-[#2dd4bf]/20 blur-3xl" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,#1a2a38_0%,transparent_45%)] opacity-80" />
+      <div className="absolute inset-0 app-bg" />
+      <div className="pointer-events-none absolute -left-20 top-20 h-72 w-72 rounded-full app-glow-accent blur-3xl" />
+      <div className="pointer-events-none absolute -right-20 bottom-10 h-72 w-72 rounded-full app-glow-mint blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 app-radial" />
 
       <section className="relative mx-auto grid w-full max-w-6xl gap-10 px-6 py-12 lg:grid-cols-[1.05fr_1fr]">
-        <div className="flex flex-col gap-6 rounded-[32px] border border-white/10 bg-white/5 p-8 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-lg">
+        <div className="flex flex-col gap-6 rounded-[32px] border-line bg-panel-frost p-8 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-lg">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.4em] text-sand">AB Loop Studio</p>
@@ -155,29 +176,38 @@ export default function ABLoopPage() {
                 精准卡点，反复听你要的那一段。
               </h1>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsLooping((prev) => !prev)}
-              className={`rounded-full border px-4 py-2 text-xs uppercase tracking-[0.2em] transition ${
-                isLooping ? "border-accent bg-accent text-ink" : "border-white/20 text-sand"
-              }`}
-            >
-              Loop {isLooping ? "On" : "Off"}
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setIsLooping((prev) => !prev)}
+                className={`rounded-full border px-4 py-2 text-xs uppercase tracking-[0.2em] transition ${
+                  isLooping ? "border-accent bg-accent text-ink" : "border-line text-sand"
+                }`}
+              >
+                Loop {isLooping ? "On" : "Off"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme((prev) => (prev === "light" ? "dark" : "light"))}
+                className="rounded-full border border-line bg-panel-soft px-4 py-2 text-xs uppercase tracking-[0.2em] text-sand transition hover:border-accent"
+              >
+                {theme === "light" ? "Dark" : "Light"}
+              </button>
+            </div>
           </div>
 
-          <div className="grid gap-4 rounded-2xl border border-white/10 bg-[#0e1620] p-5">
+          <div className="grid gap-4 rounded-2xl border-line bg-panel-strong p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <label className="inline-flex cursor-pointer items-center gap-3 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm text-sand transition hover:border-accent">
+                <label className="inline-flex cursor-pointer items-center gap-3 rounded-full border border-line bg-panel-soft px-4 py-2 text-sm text-sand transition hover:border-accent">
                   <input type="file" accept="audio/*" onChange={handleUpload} className="hidden" />
                   Upload Audio
                 </label>
-                <span className="text-xs text-white/50">
+                <span className="text-xs text-faint">
                   {fileName || "No file selected"}
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/40">
+              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-faint">
                 <span>{formatTime(currentTime)}</span>
                 <span className="text-accent">/ {formatTime(duration)}</span>
               </div>
@@ -205,7 +235,7 @@ export default function ABLoopPage() {
                 type="button"
                 onClick={togglePlay}
                 disabled={!hasAudio}
-                className="rounded-full bg-cream px-6 py-3 text-sm font-semibold text-ink transition hover:translate-y-[-1px] disabled:opacity-40"
+                className="btn-primary rounded-full px-6 py-3 text-sm font-semibold transition hover:translate-y-[-1px] disabled:opacity-40"
               >
                 {isPlaying ? "Pause" : "Play"}
               </button>
@@ -217,13 +247,13 @@ export default function ABLoopPage() {
                   audioRef.current.play();
                 }}
                 disabled={!hasAudio || loopLength <= 0}
-                className="rounded-full border border-white/20 px-6 py-3 text-sm text-sand transition hover:border-accent disabled:opacity-40"
+                className="rounded-full border border-line px-6 py-3 text-sm text-sand transition hover:border-accent disabled:opacity-40"
               >
                 Play A→B
               </button>
-              <div className="ml-auto flex items-center gap-3 rounded-full border border-white/15 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.3em] text-sand">
+              <div className="ml-auto flex items-center gap-3 rounded-full border border-line bg-panel-soft px-4 py-2 text-xs uppercase tracking-[0.3em] text-sand">
                 <span>Speed</span>
-                <span className="text-accent">{playbackRate.toFixed(2)}x</span>
+              <span className="text-accent">{playbackRate.toFixed(2)}x</span>
               </div>
             </div>
 
@@ -233,19 +263,26 @@ export default function ABLoopPage() {
               max="2"
               step="0.05"
               value={playbackRate}
-              onChange={(event) => setPlaybackRate(Number(event.target.value))}
+              onChange={(event) => {
+                const nextRate = Number(event.target.value);
+                setPlaybackRate(nextRate);
+                if (audioRef.current) {
+                  audioRef.current.playbackRate = nextRate;
+                  audioRef.current.defaultPlaybackRate = nextRate;
+                }
+              }}
               className="range range-accent"
             />
           </div>
 
-          <div className="grid gap-4 rounded-2xl border border-white/10 bg-white/5 p-5">
+          <div className="grid gap-4 rounded-2xl border-line bg-panel-soft p-5">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/20 text-accent">
                   A
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-white/50">Point A</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-faint">Point A</p>
                   <p className="font-display text-2xl">{formatTime(aPoint)}</p>
                 </div>
               </div>
@@ -273,14 +310,14 @@ export default function ABLoopPage() {
             />
           </div>
 
-          <div className="grid gap-4 rounded-2xl border border-white/10 bg-white/5 p-5">
+          <div className="grid gap-4 rounded-2xl border-line bg-panel-soft p-5">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-mint/20 text-mint">
                   B
                 </div>
                 <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-white/50">Point B</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-faint">Point B</p>
                   <p className="font-display text-2xl">{formatTime(bPoint)}</p>
                 </div>
               </div>
@@ -310,17 +347,17 @@ export default function ABLoopPage() {
         </div>
 
         <div className="flex flex-col gap-6">
-          <div className="rounded-[28px] border border-white/10 bg-gradient-to-br from-[#121b25] via-[#0c141c] to-[#0b0f14] p-8 shadow-[0_40px_120px_rgba(0,0,0,0.55)]">
-            <p className="text-xs uppercase tracking-[0.4em] text-white/40">Loop Preview</p>
+          <div className="rounded-[28px] border-line bg-panel-gradient p-8 shadow-[0_40px_120px_rgba(0,0,0,0.55)]">
+            <p className="text-xs uppercase tracking-[0.4em] text-faint">Loop Preview</p>
             <div className="mt-6 grid gap-4">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-white/50">A to B length</p>
+              <div className="rounded-2xl border-line bg-panel-soft p-6">
+                <p className="text-xs uppercase tracking-[0.3em] text-faint">A to B length</p>
                 <p className="mt-2 font-display text-5xl text-accent">
                   {loopLength > 0 ? `${loopLength.toFixed(2)}s` : "--"}
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <p className="text-xs uppercase tracking-[0.3em] text-white/50">Flow Tips</p>
+              <div className="rounded-2xl border-line bg-panel-soft p-6">
+                <p className="text-xs uppercase tracking-[0.3em] text-faint">Flow Tips</p>
                 <ul className="mt-3 grid gap-2 text-sm text-sand">
                   <li>拖动进度条到你想听的位置，再点 Set A / Set B。</li>
                   <li>用 -0.25s / +0.25s 微调，让循环卡得更准。</li>
@@ -330,14 +367,14 @@ export default function ABLoopPage() {
             </div>
           </div>
 
-          <div className="rounded-[28px] border border-white/10 bg-white/5 p-8">
-            <p className="text-xs uppercase tracking-[0.4em] text-white/40">Live Markers</p>
+          <div className="rounded-[28px] border-line bg-panel-soft p-8">
+            <p className="text-xs uppercase tracking-[0.4em] text-faint">Live Markers</p>
             <div className="mt-6 grid gap-4">
-              <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#0c131a] p-5">
+              <div className="flex items-center justify-between rounded-2xl border-line bg-panel-deep p-5">
                 <span className="text-sm text-sand">Current</span>
                 <span className="font-display text-3xl text-cream">{formatTime(currentTime)}</span>
               </div>
-              <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-[#0c131a] p-5">
+              <div className="flex items-center justify-between rounded-2xl border-line bg-panel-deep p-5">
                 <span className="text-sm text-sand">Playback rate</span>
                 <span className="font-display text-3xl text-mint">{playbackRate.toFixed(2)}x</span>
               </div>
@@ -357,6 +394,46 @@ export default function ABLoopPage() {
           --sand: #a7b2bc;
           --accent: #ff784f;
           --mint: #2dd4bf;
+          --line: rgba(255, 255, 255, 0.12);
+          --surface-frost: rgba(255, 255, 255, 0.06);
+          --surface-strong: #0e1620;
+          --surface-soft: rgba(255, 255, 255, 0.05);
+          --surface-deep: #0c131a;
+          --surface-gradient: linear-gradient(135deg, #121b25 0%, #0c141c 48%, #0b0f14 100%);
+          --glow-accent: rgba(255, 120, 79, 0.2);
+          --glow-mint: rgba(45, 212, 191, 0.2);
+          --bg-hero: linear-gradient(135deg, #0b0f14 0%, #0b0f14 40%, #0f1a24 100%);
+          --bg-radial: radial-gradient(circle at top, #1a2a38 0%, transparent 45%);
+          --button-primary-bg: #ffd5c4;
+          --button-primary-text: #22120d;
+          --slider-track: rgba(255, 255, 255, 0.14);
+          --slider-track-muted: rgba(255, 255, 255, 0.08);
+          --slider-thumb-bg: #ffd5c4;
+          --slider-thumb-border: #ff784f;
+        }
+
+        [data-theme="light"] {
+          --ink: #f7f3ec;
+          --cream: #1b2127;
+          --sand: #5e6a75;
+          --accent: #e4572e;
+          --mint: #1ea79a;
+          --line: rgba(19, 24, 32, 0.14);
+          --surface-frost: rgba(255, 255, 255, 0.78);
+          --surface-strong: #f2ece2;
+          --surface-soft: rgba(255, 255, 255, 0.6);
+          --surface-deep: #efe7db;
+          --surface-gradient: linear-gradient(135deg, #fbf8f3 0%, #f0e7db 55%, #e9dfd2 100%);
+          --glow-accent: rgba(228, 87, 46, 0.2);
+          --glow-mint: rgba(30, 167, 154, 0.2);
+          --bg-hero: linear-gradient(135deg, #f7f3ec 0%, #f7f3ec 45%, #e9dfd2 100%);
+          --bg-radial: radial-gradient(circle at top, rgba(233, 223, 210, 0.9) 0%, transparent 45%);
+          --button-primary-bg: #ffd1bd;
+          --button-primary-text: #2b1a14;
+          --slider-track: rgba(27, 33, 39, 0.35);
+          --slider-track-muted: rgba(27, 33, 39, 0.18);
+          --slider-thumb-bg: #ffd1bd;
+          --slider-thumb-border: #e4572e;
         }
 
         body {
@@ -397,6 +474,51 @@ export default function ABLoopPage() {
           background-color: var(--mint);
         }
 
+        .border-line {
+          border: 1px solid var(--line);
+        }
+
+        .bg-panel-frost {
+          background: var(--surface-frost);
+        }
+
+        .bg-panel-strong {
+          background: var(--surface-strong);
+        }
+
+        .bg-panel-soft {
+          background: var(--surface-soft);
+        }
+
+        .bg-panel-deep {
+          background: var(--surface-deep);
+        }
+
+        .bg-panel-gradient {
+          background: var(--surface-gradient);
+        }
+
+        .text-faint {
+          color: color-mix(in srgb, var(--sand) 70%, transparent);
+        }
+
+        .app-bg {
+          background: var(--bg-hero);
+        }
+
+        .app-radial {
+          background: var(--bg-radial);
+          opacity: 0.8;
+        }
+
+        .app-glow-accent {
+          background: var(--glow-accent);
+        }
+
+        .app-glow-mint {
+          background: var(--glow-mint);
+        }
+
         .pill {
           border-radius: 999px;
           border: 1px solid rgba(255, 255, 255, 0.2);
@@ -417,12 +539,18 @@ export default function ABLoopPage() {
           opacity: 0.4;
         }
 
+        .btn-primary {
+          background: var(--button-primary-bg);
+          color: var(--button-primary-text);
+          border: 1px solid color-mix(in srgb, var(--button-primary-bg) 80%, transparent);
+        }
+
         .range {
           appearance: none;
           width: 100%;
           height: 6px;
           border-radius: 999px;
-          background: linear-gradient(90deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.06));
+          background: linear-gradient(90deg, var(--slider-track), var(--slider-track-muted));
           outline: none;
         }
 
@@ -431,9 +559,9 @@ export default function ABLoopPage() {
           width: 18px;
           height: 18px;
           border-radius: 50%;
-          background: var(--cream);
-          border: 2px solid var(--accent);
-          box-shadow: 0 0 0 6px rgba(255, 120, 79, 0.15);
+          background: var(--slider-thumb-bg);
+          border: 2px solid var(--slider-thumb-border);
+          box-shadow: 0 0 0 6px color-mix(in srgb, var(--slider-thumb-border) 20%, transparent);
           transition: transform 0.2s ease;
         }
 
@@ -445,13 +573,13 @@ export default function ABLoopPage() {
           width: 18px;
           height: 18px;
           border-radius: 50%;
-          background: var(--cream);
-          border: 2px solid var(--accent);
+          background: var(--slider-thumb-bg);
+          border: 2px solid var(--slider-thumb-border);
         }
 
         .range-accent::-webkit-slider-thumb {
           border-color: var(--mint);
-          box-shadow: 0 0 0 6px rgba(45, 212, 191, 0.15);
+          box-shadow: 0 0 0 6px color-mix(in srgb, var(--mint) 20%, transparent);
         }
       `}</style>
     </main>
