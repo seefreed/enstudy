@@ -63,7 +63,6 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showReader, setShowReader] = useState(false);
   const [theme, setTheme] = useState("dark");
-  const [showFullText, setShowFullText] = useState(false);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef(null);
@@ -217,17 +216,6 @@ export default function HomePage() {
     return () => cancelAnimationFrame(rafId);
   }, [isPlaying, updateFromTime]);
 
-  useEffect(() => {
-    const onKeyDown = (event) => {
-      if (event.key === "Escape") {
-        setShowFullText(false);
-      }
-    };
-    if (showFullText) {
-      document.addEventListener("keydown", onKeyDown);
-    }
-    return () => document.removeEventListener("keydown", onKeyDown);
-  }, [showFullText]);
 
   const handleText = (text) => {
     setRawText(text);
@@ -360,7 +348,6 @@ export default function HomePage() {
     setRawText("");
     setStatus("Ready.");
     setShowReader(false);
-    setShowFullText(false);
   };
 
   const toggleTheme = () => {
@@ -492,19 +479,6 @@ export default function HomePage() {
             {Math.min(index + 1, Math.max(total, 1))} / {Math.max(total, 1)}
           </span>
         </div>
-        <button
-          type="button"
-          className="absolute right-6 top-6 grid h-11 w-11 place-items-center rounded-xl border border-line bg-[rgba(18,22,30,0.6)] text-muted transition hover:-translate-y-0.5 hover:border-ink hover:text-ink"
-          onClick={() => setShowFullText(true)}
-          aria-label="Open full text"
-        >
-          <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-5 w-5 stroke-current">
-            <path d="M6 4h9l3 3v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" />
-            <path d="M14 4v4h4" />
-            <path d="M8 13h8" />
-            <path d="M8 17h6" />
-          </svg>
-        </button>
         <div className="relative flex flex-1 items-center justify-center px-6 py-10">
           <div className="pointer-events-none absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-line opacity-50" />
           <div className="w-full max-w-4xl text-5xl leading-none text-ink sm:text-7xl md:text-8xl">
@@ -618,38 +592,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {showFullText ? (
-        <div
-          className="fixed inset-0 z-10 grid place-items-center bg-[radial-gradient(circle_at_top,rgba(20,24,35,0.95),rgba(6,9,14,0.9))] px-6 py-10 backdrop-blur"
-          onClick={() => setShowFullText(false)}
-        >
-          <div
-            className="grid max-h-[82vh] w-full max-w-3xl gap-4 rounded-2xl border border-white/10 bg-[linear-gradient(160deg,rgba(30,36,50,0.95),rgba(18,22,32,0.98))] p-7 shadow-halo"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-center justify-between font-display">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted">Full text</p>
-                <h2 className="text-2xl text-ink">Reading source</h2>
-              </div>
-              <button
-                type="button"
-                className="grid h-10 w-10 place-items-center rounded-xl border border-line text-muted transition hover:border-ink hover:text-ink"
-                onClick={() => setShowFullText(false)}
-                aria-label="Close"
-              >
-                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-4 w-4 stroke-current">
-                  <path d="M18 6 6 18" />
-                  <path d="M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="max-h-[60vh] overflow-y-auto rounded-2xl border border-white/5 bg-[rgba(9,12,18,0.6)] p-5 text-sm leading-7 text-muted whitespace-pre-wrap">
-              {rawText.trim() || alignmentText || DEFAULT_TEXT}
-            </div>
-          </div>
-        </div>
-      ) : null}
       <audio ref={audioRef} src={audioUrl} preload="metadata" />
     </main>
   );
