@@ -488,12 +488,6 @@ export default function HomePage() {
           </div>
         </div>
         <div className="grid gap-6 border-t border-line bg-panel px-6 py-6 md:px-12">
-          <div className="h-0.5 w-full bg-line">
-            <div
-              className="h-full bg-accent transition-[width] duration-100"
-              style={{ width: duration ? `${(currentTime / duration) * 100}%` : "0%" }}
-            />
-          </div>
           <div className="flex flex-wrap items-center gap-5">
             <button
               type="button"
