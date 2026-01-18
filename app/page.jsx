@@ -65,6 +65,7 @@ export default function HomePage() {
   const [theme, setTheme] = useState("dark");
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [isLooping, setIsLooping] = useState(false);
   const audioRef = useRef(null);
   const audioUrlRef = useRef(null);
 
@@ -180,6 +181,13 @@ export default function HomePage() {
       updateFromTime(audio.currentTime || 0);
     };
     const handleEnded = () => {
+      if (isLooping) {
+        const restartTime = alignment[0]?.start || 0;
+        audio.currentTime = restartTime;
+        updateFromTime(restartTime);
+        audio.play();
+        return;
+      }
       setIsPlaying(false);
       updateFromTime(audio.duration || audio.currentTime || 0);
     };
@@ -199,7 +207,7 @@ export default function HomePage() {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [updateFromTime]);
+  }, [alignment, isLooping, updateFromTime]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -352,6 +360,10 @@ export default function HomePage() {
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
+  };
+
+  const toggleLoop = () => {
+    setIsLooping((prev) => !prev);
   };
 
   const renderWord = (word) => {
@@ -564,6 +576,22 @@ export default function HomePage() {
                   </svg>
                 )}
               </button>
+              <button
+                type="button"
+                className={`grid h-10 w-10 place-items-center rounded-full border transition hover:border-ink hover:text-ink ${
+                  isLooping ? "border-accent text-accent" : "border-line text-muted"
+                }`}
+                onClick={toggleLoop}
+                aria-label="Toggle loop"
+                title="Loop"
+              >
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-4 w-4 stroke-current">
+                  <path d="M17 2l4 4-4 4" />
+                  <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                  <path d="M7 22l-4-4 4-4" />
+                  <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                </svg>
+              </button>
             </div>
           </div>
           <input
@@ -586,7 +614,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <audio ref={audioRef} src={audioUrl} preload="metadata" />
+      <audio ref={audioRef} src={audioUrl} preload="metadata" loop={isLooping} />
     </main>
   );
 }
