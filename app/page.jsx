@@ -60,7 +60,6 @@ export default function HomePage() {
   const [index, setIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [status, setStatus] = useState("Ready.");
-  const [urlInput, setUrlInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showReader, setShowReader] = useState(false);
   const [theme, setTheme] = useState("dark");
@@ -242,99 +241,73 @@ export default function HomePage() {
     }
   };
 
-  const handleFile = async (event) => {
-    const files = Array.from(event.target.files ?? []);
-    if (!files.length) return;
+  const handleAudioFile = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
     setIsLoading(true);
-    setStatus("Reading file...");
+    setStatus("Loading audio...");
 
     try {
-      let loadedAlignment = false;
-      let loadedAudio = false;
-
-      for (const file of files) {
-        if (file.type.startsWith("audio/")) {
-          const nextUrl = URL.createObjectURL(file);
-          if (audioUrlRef.current && audioUrlRef.current.startsWith("blob:")) {
-            URL.revokeObjectURL(audioUrlRef.current);
-          }
-          audioUrlRef.current = nextUrl;
-          setAudioUrl(nextUrl);
-          loadedAudio = true;
-        } else if (
-          file.type === "application/json" ||
-          file.name.toLowerCase().endsWith(".json")
-        ) {
-          const text = await file.text();
-          const data = JSON.parse(text);
-          if (!Array.isArray(data)) {
-            throw new Error("Alignment JSON must be an array.");
-          }
-          const cleaned = data
-            .filter((item) => item && typeof item.word === "string")
-            .map((item) => ({
-              word: item.word.trim(),
-              start: Number(item.start) || 0,
-              end: Number(item.end) || 0
-            }))
-            .filter((item) => item.word.length);
-          applyAlignment(cleaned);
-          loadedAlignment = true;
-        }
+      if (!file.type.startsWith("audio/")) {
+        throw new Error("Not an audio file.");
       }
+      const nextUrl = URL.createObjectURL(file);
+      if (audioUrlRef.current && audioUrlRef.current.startsWith("blob:")) {
+        URL.revokeObjectURL(audioUrlRef.current);
+      }
+      audioUrlRef.current = nextUrl;
+      setAudioUrl(nextUrl);
 
-      if (loadedAudio && audioRef.current) {
+      if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current.currentTime = 0;
         setCurrentTime(0);
       }
 
-      if (loadedAudio && loadedAlignment) {
-        setStatus("Loaded audio + alignment.");
-      } else if (loadedAudio) {
-        setStatus("Loaded audio file.");
-      } else if (loadedAlignment) {
-        setStatus("Loaded alignment file.");
-      } else {
-        setStatus("Unsupported file type.");
-      }
+      setStatus("Loaded audio file.");
     } catch (error) {
-      setStatus("Could not read that file. Try audio or JSON.");
+      setStatus("Could not read that audio file.");
     } finally {
       setIsLoading(false);
       event.target.value = "";
     }
   };
 
-  const fetchUrl = async () => {
-    if (!urlInput.trim()) {
-      setStatus("Paste a URL first.");
-      return;
-    }
+  const handleAlignmentFile = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
     setIsLoading(true);
-    setStatus("Fetching URL...");
+    setStatus("Loading alignment...");
 
     try {
-      const response = await fetch("/api/fetch-text", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: urlInput.trim() })
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Fetch failed");
+      if (
+        file.type !== "application/json" &&
+        !file.name.toLowerCase().endsWith(".json")
+      ) {
+        throw new Error("Not a JSON file.");
       }
-
-      const data = await response.json();
-      handleText(data.text);
-      setStatus("URL loaded.");
+      const text = await file.text();
+      const data = JSON.parse(text);
+      if (!Array.isArray(data)) {
+        throw new Error("Alignment JSON must be an array.");
+      }
+      const cleaned = data
+        .filter((item) => item && typeof item.word === "string")
+        .map((item) => ({
+          word: item.word.trim(),
+          start: Number(item.start) || 0,
+          end: Number(item.end) || 0
+        }))
+        .filter((item) => item.word.length);
+      applyAlignment(cleaned);
+      setStatus("Loaded alignment file.");
     } catch (error) {
-      setStatus("URL fetch failed. Try a different page.");
+      setStatus("Could not read that alignment file.");
     } finally {
       setIsLoading(false);
+      event.target.value = "";
     }
   };
 
@@ -385,7 +358,6 @@ export default function HomePage() {
     setIsPlaying(false);
     setCurrentTime(0);
     setRawText("");
-    setUrlInput("");
     setStatus("Ready.");
     setShowReader(false);
     setShowFullText(false);
@@ -434,8 +406,8 @@ export default function HomePage() {
               Focus on one word at a time.
             </h1>
             <p className="max-w-xl text-base text-muted">
-              Upload a file, paste text, or fetch a URL. Clean, direct, and ready
-              for reading.
+              Upload audio and its word alignment JSON, or paste text. Clean,
+              direct, and ready for reading.
             </p>
           </div>
           <div className="grid gap-6 rounded-2xl border border-line bg-panel p-8 shadow-halo">
@@ -445,40 +417,39 @@ export default function HomePage() {
                 {status}
               </span>
             </div>
-            <label className="group relative grid cursor-pointer gap-2 rounded-xl border border-dashed border-line bg-soft px-6 py-6 text-center transition hover:border-accent hover:bg-[rgba(243,92,74,0.12)]">
-              <input
-                type="file"
-                accept="audio/*,application/json,.json"
-                onChange={handleFile}
-                disabled={isLoading}
-                multiple
-                className="absolute inset-0 cursor-pointer opacity-0"
-              />
-              <div className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-line text-2xl text-accent">
-                +
-              </div>
-              <p className="text-sm text-muted">
-                Click to upload or drop files<br />
-                audio + .json
-              </p>
-            </label>
-            <div className="grid gap-3 md:grid-cols-[1fr_auto]">
-              <input
-                type="url"
-                placeholder="https://example.com/article"
-                value={urlInput}
-                onChange={(event) => setUrlInput(event.target.value)}
-                disabled={isLoading}
-                className="rounded-xl border border-line bg-soft px-4 py-3 text-sm text-ink placeholder:text-muted"
-              />
-              <button
-                type="button"
-                onClick={fetchUrl}
-                disabled={isLoading}
-                className="rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                Fetch URL
-              </button>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="group relative grid cursor-pointer gap-2 rounded-xl border border-dashed border-line bg-soft px-6 py-6 text-center transition hover:border-accent hover:bg-[rgba(243,92,74,0.12)]">
+                <input
+                  type="file"
+                  accept="audio/*"
+                  onChange={handleAudioFile}
+                  disabled={isLoading}
+                  className="absolute inset-0 cursor-pointer opacity-0"
+                />
+                <div className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-line text-2xl text-accent">
+                  +
+                </div>
+                <p className="text-sm text-muted">
+                  Upload audio<br />
+                  .mp3 .wav
+                </p>
+              </label>
+              <label className="group relative grid cursor-pointer gap-2 rounded-xl border border-dashed border-line bg-soft px-6 py-6 text-center transition hover:border-accent hover:bg-[rgba(243,92,74,0.12)]">
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  onChange={handleAlignmentFile}
+                  disabled={isLoading}
+                  className="absolute inset-0 cursor-pointer opacity-0"
+                />
+                <div className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-line text-2xl text-accent">
+                  +
+                </div>
+                <p className="text-sm text-muted">
+                  Upload alignment<br />
+                  .json
+                </p>
+              </label>
             </div>
             <textarea
               className="min-h-[120px] w-full resize-y rounded-xl border border-line bg-soft px-4 py-3 text-sm text-ink placeholder:text-muted"
