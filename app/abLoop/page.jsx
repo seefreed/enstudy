@@ -180,18 +180,41 @@ export default function ABLoopPage() {
               <button
                 type="button"
                 onClick={() => setIsLooping((prev) => !prev)}
-                className={`rounded-full border px-4 py-2 text-xs uppercase tracking-[0.2em] transition ${
-                  isLooping ? "border-accent bg-accent text-ink" : "border-line text-sand"
-                }`}
+                className={`icon-button ${isLooping ? "icon-button--active" : ""}`}
+                aria-label="Toggle loop"
+                title="Loop"
               >
-                Loop {isLooping ? "On" : "Off"}
+                <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-4 w-4 stroke-current">
+                  <path d="M17 2l4 4-4 4" />
+                  <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                  <path d="M7 22l-4-4 4-4" />
+                  <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                </svg>
               </button>
               <button
                 type="button"
                 onClick={() => setTheme((prev) => (prev === "light" ? "dark" : "light"))}
-                className="rounded-full border border-line bg-panel-soft px-4 py-2 text-xs uppercase tracking-[0.2em] text-sand transition hover:border-accent"
+                className="icon-button"
+                aria-label="Toggle theme"
+                title="Theme"
               >
-                {theme === "light" ? "Dark" : "Light"}
+                {theme === "light" ? (
+                  <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-4 w-4 stroke-current">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" fill="none" strokeWidth="2" className="h-4 w-4 stroke-current">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                  </svg>
+                )}
               </button>
             </div>
           </div>
@@ -543,6 +566,29 @@ export default function ABLoopPage() {
           background: var(--button-primary-bg);
           color: var(--button-primary-text);
           border: 1px solid color-mix(in srgb, var(--button-primary-bg) 80%, transparent);
+        }
+
+        .icon-button {
+          height: 2.5rem;
+          width: 2.5rem;
+          border-radius: 999px;
+          border: 1px solid var(--line);
+          background: var(--surface-soft);
+          color: var(--sand);
+          display: grid;
+          place-items: center;
+          transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+        }
+
+        .icon-button:hover {
+          border-color: var(--accent);
+          color: var(--cream);
+        }
+
+        .icon-button--active {
+          background: color-mix(in srgb, var(--accent) 18%, var(--surface-soft));
+          border-color: var(--accent);
+          color: var(--accent);
         }
 
         .range {
