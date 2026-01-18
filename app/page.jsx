@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 const DEFAULT_TEXT = "Paste text, upload a file, or fetch a URL to begin.";
 
@@ -23,9 +23,40 @@ function splitWord(word) {
   return { lead: match[1], core: match[2], tail: match[3] };
 }
 
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds)) return "0:00";
+  const minutes = Math.floor(seconds / 60);
+  const remaining = Math.floor(seconds % 60);
+  return `${minutes}:${remaining.toString().padStart(2, "0")}`;
+}
+
+function findWordIndex(time, alignment) {
+  if (!alignment.length) return 0;
+  let low = 0;
+  let high = alignment.length - 1;
+  let result = 0;
+
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2);
+    const current = alignment[mid];
+
+    if (time < current.start) {
+      high = mid - 1;
+    } else if (time > current.end) {
+      result = mid;
+      low = mid + 1;
+    } else {
+      return mid;
+    }
+  }
+
+  return Math.min(result, alignment.length - 1);
+}
+
 export default function HomePage() {
   const [rawText, setRawText] = useState("");
-  const [wpm, setWpm] = useState(200);
+  const [alignment, setAlignment] = useState([]);
+  const [audioUrl, setAudioUrl] = useState("/output_audio.mp3");
   const [index, setIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [status, setStatus] = useState("Ready.");
@@ -34,33 +65,27 @@ export default function HomePage() {
   const [showReader, setShowReader] = useState(false);
   const [theme, setTheme] = useState("dark");
   const [showFullText, setShowFullText] = useState(false);
-  const timerRef = useRef(null);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const audioRef = useRef(null);
+  const audioUrlRef = useRef(null);
 
-  const words = useMemo(() => extractWords(rawText), [rawText]);
+  const words = useMemo(
+    () => (alignment.length ? alignment.map((item) => item.word) : extractWords(rawText)),
+    [alignment, rawText]
+  );
+  const alignmentText = useMemo(
+    () => (alignment.length ? alignment.map((item) => item.word).join(" ") : ""),
+    [alignment]
+  );
   const total = words.length;
   const currentWord = words[index];
 
-  useEffect(() => {
-    if (!isPlaying || total === 0) {
-      return;
-    }
-
-    const delay = Math.max(60, Math.round(60000 / wpm));
-    timerRef.current = setInterval(() => {
-      setIndex((prev) => {
-        const next = prev + 1;
-        if (next >= total) {
-          setIsPlaying(false);
-          return prev;
-        }
-        return next;
-      });
-    }, delay);
-
-    return () => {
-      clearInterval(timerRef.current);
-    };
-  }, [isPlaying, wpm, total]);
+  const applyAlignment = useCallback((items) => {
+    setAlignment(items);
+    setIndex(0);
+    setRawText((prev) => (prev.trim() ? prev : items.map((item) => item.word).join(" ")));
+  }, []);
 
   useEffect(() => {
     if (index >= total && total > 0) {
@@ -89,6 +114,111 @@ export default function HomePage() {
   }, [theme]);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const loadAlignment = async () => {
+      try {
+        setStatus("Loading audio alignment...");
+        const response = await fetch("/words_alignment.json");
+        if (!response.ok) {
+          throw new Error("Alignment not found.");
+        }
+        const data = await response.json();
+        if (!Array.isArray(data)) {
+          throw new Error("Alignment format invalid.");
+        }
+        const cleaned = data
+          .filter((item) => item && typeof item.word === "string")
+          .map((item) => ({
+            word: item.word.trim(),
+            start: Number(item.start) || 0,
+            end: Number(item.end) || 0
+          }))
+          .filter((item) => item.word.length);
+
+        if (!isMounted) return;
+        applyAlignment(cleaned);
+        setStatus("Audio alignment ready.");
+      } catch (error) {
+        if (!isMounted) return;
+        setStatus("Audio alignment failed to load.");
+      }
+    };
+
+    loadAlignment();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (audioUrlRef.current && audioUrlRef.current.startsWith("blob:")) {
+        URL.revokeObjectURL(audioUrlRef.current);
+      }
+    };
+  }, []);
+
+  const updateFromTime = useCallback(
+    (time) => {
+      setCurrentTime(time);
+      if (!alignment.length) return;
+      const nextIndex = findWordIndex(time, alignment);
+      setIndex((prev) => (prev === nextIndex ? prev : nextIndex));
+    },
+    [alignment]
+  );
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleLoadedMetadata = () => setDuration(Number.isFinite(audio.duration) ? audio.duration : 0);
+    const handleSeeked = () => updateFromTime(audio.currentTime || 0);
+    const handleTimeUpdate = () => {
+      if (!audio.paused) return;
+      updateFromTime(audio.currentTime || 0);
+    };
+    const handleEnded = () => {
+      setIsPlaying(false);
+      updateFromTime(audio.duration || audio.currentTime || 0);
+    };
+
+    audio.addEventListener("play", handlePlay);
+    audio.addEventListener("pause", handlePause);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("seeked", handleSeeked);
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("ended", handleEnded);
+
+    return () => {
+      audio.removeEventListener("play", handlePlay);
+      audio.removeEventListener("pause", handlePause);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("seeked", handleSeeked);
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, [updateFromTime]);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    let rafId = 0;
+
+    const tick = () => {
+      if (audioRef.current) {
+        updateFromTime(audioRef.current.currentTime || 0);
+      }
+      rafId = requestAnimationFrame(tick);
+    };
+
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [isPlaying, updateFromTime]);
+
+  useEffect(() => {
     const onKeyDown = (event) => {
       if (event.key === "Escape") {
         setShowFullText(false);
@@ -105,42 +235,72 @@ export default function HomePage() {
     setIndex(0);
     setIsPlaying(false);
     setShowReader(true);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setCurrentTime(0);
+    }
   };
 
   const handleFile = async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(event.target.files ?? []);
+    if (!files.length) return;
 
     setIsLoading(true);
     setStatus("Reading file...");
 
     try {
-      if (file.type === "application/pdf" || file.name.endsWith(".pdf")) {
-        const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
-        const workerUrl = (await import(
-          "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url"
-        )).default;
-        pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-        let text = "";
+      let loadedAlignment = false;
+      let loadedAudio = false;
 
-        for (let i = 1; i <= pdf.numPages; i += 1) {
-          const page = await pdf.getPage(i);
-          const content = await page.getTextContent();
-          const strings = content.items.map((item) => item.str);
-          text += strings.join(" ") + " ";
+      for (const file of files) {
+        if (file.type.startsWith("audio/")) {
+          const nextUrl = URL.createObjectURL(file);
+          if (audioUrlRef.current && audioUrlRef.current.startsWith("blob:")) {
+            URL.revokeObjectURL(audioUrlRef.current);
+          }
+          audioUrlRef.current = nextUrl;
+          setAudioUrl(nextUrl);
+          loadedAudio = true;
+        } else if (
+          file.type === "application/json" ||
+          file.name.toLowerCase().endsWith(".json")
+        ) {
+          const text = await file.text();
+          const data = JSON.parse(text);
+          if (!Array.isArray(data)) {
+            throw new Error("Alignment JSON must be an array.");
+          }
+          const cleaned = data
+            .filter((item) => item && typeof item.word === "string")
+            .map((item) => ({
+              word: item.word.trim(),
+              start: Number(item.start) || 0,
+              end: Number(item.end) || 0
+            }))
+            .filter((item) => item.word.length);
+          applyAlignment(cleaned);
+          loadedAlignment = true;
         }
+      }
 
-        handleText(text);
-        setStatus(`Loaded PDF with ${pdf.numPages} pages.`);
+      if (loadedAudio && audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        setCurrentTime(0);
+      }
+
+      if (loadedAudio && loadedAlignment) {
+        setStatus("Loaded audio + alignment.");
+      } else if (loadedAudio) {
+        setStatus("Loaded audio file.");
+      } else if (loadedAlignment) {
+        setStatus("Loaded alignment file.");
       } else {
-        const text = await file.text();
-        handleText(text);
-        setStatus("Loaded text file.");
+        setStatus("Unsupported file type.");
       }
     } catch (error) {
-      setStatus("Could not read that file. Try another format.");
+      setStatus("Could not read that file. Try audio or JSON.");
     } finally {
       setIsLoading(false);
       event.target.value = "";
@@ -194,7 +354,15 @@ export default function HomePage() {
       setStatus("Load text first.");
       return;
     }
-    setIsPlaying((prev) => !prev);
+    if (!audioRef.current) {
+      setStatus("Audio not ready.");
+      return;
+    }
+    if (audioRef.current.paused) {
+      audioRef.current.play();
+    } else {
+      audioRef.current.pause();
+    }
   };
 
   const restart = () => {
@@ -203,13 +371,19 @@ export default function HomePage() {
       return;
     }
     setIndex(0);
-    setIsPlaying(true);
+    if (!audioRef.current) return;
+    audioRef.current.currentTime = alignment[0]?.start || 0;
+    audioRef.current.play();
   };
 
   const reset = () => {
-    clearInterval(timerRef.current);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
     setIndex(0);
     setIsPlaying(false);
+    setCurrentTime(0);
     setRawText("");
     setUrlInput("");
     setStatus("Ready.");
@@ -274,17 +448,18 @@ export default function HomePage() {
             <label className="group relative grid cursor-pointer gap-2 rounded-xl border border-dashed border-line bg-soft px-6 py-6 text-center transition hover:border-accent hover:bg-[rgba(243,92,74,0.12)]">
               <input
                 type="file"
-                accept=".txt,.pdf,.md,text/plain,application/pdf,text/markdown"
+                accept="audio/*,application/json,.json"
                 onChange={handleFile}
                 disabled={isLoading}
+                multiple
                 className="absolute inset-0 cursor-pointer opacity-0"
               />
               <div className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-line text-2xl text-accent">
                 +
               </div>
               <p className="text-sm text-muted">
-                Click to upload or drop a file<br />
-                .txt .md .pdf
+                Click to upload or drop files<br />
+                audio + .json
               </p>
             </label>
             <div className="grid gap-3 md:grid-cols-[1fr_auto]">
@@ -312,6 +487,9 @@ export default function HomePage() {
               onChange={(event) => setRawText(event.target.value)}
               rows={5}
             />
+            <p className="text-xs text-muted">
+              Audio sync uses the transcript JSON with word timestamps.
+            </p>
             <div className="flex flex-wrap items-center justify-between gap-4">
               <button
                 type="button"
@@ -368,7 +546,7 @@ export default function HomePage() {
           <div className="h-0.5 w-full bg-line">
             <div
               className="h-full bg-accent transition-[width] duration-100"
-              style={{ width: total ? `${(index / total) * 100}%` : "0%" }}
+              style={{ width: duration ? `${(currentTime / duration) * 100}%` : "0%" }}
             />
           </div>
           <div className="flex flex-wrap items-center gap-5">
@@ -390,19 +568,11 @@ export default function HomePage() {
               )}
             </button>
             <div className="flex min-w-[260px] flex-1 items-center gap-4">
-              <span className="text-xs uppercase tracking-[0.12em] text-muted">Speed</span>
-              <input
-                type="range"
-                className="range-slider flex-1"
-                min="120"
-                max="800"
-                step="10"
-                value={wpm}
-                onChange={(event) => setWpm(Number(event.target.value))}
-              />
-              <span className="min-w-[90px] text-right text-sm font-semibold text-accent">
-                {wpm} WPM
-              </span>
+              <span className="text-xs uppercase tracking-[0.12em] text-muted">Audio</span>
+              <div className="flex flex-1 items-center justify-between text-sm text-muted">
+                <span>{formatTime(currentTime)}</span>
+                <span className="text-accent">{formatTime(duration)}</span>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <button
@@ -462,7 +632,15 @@ export default function HomePage() {
             min="0"
             max={Math.max(total - 1, 0)}
             value={Math.min(index, Math.max(total - 1, 0))}
-            onChange={(event) => setIndex(Number(event.target.value))}
+            onChange={(event) => {
+              const nextIndex = Number(event.target.value);
+              setIndex(nextIndex);
+              if (audioRef.current && alignment.length) {
+                const nextTime = alignment[nextIndex]?.start || 0;
+                audioRef.current.currentTime = nextTime;
+                setCurrentTime(nextTime);
+              }
+            }}
             disabled={!total}
             className="range-slider w-full"
           />
@@ -496,11 +674,12 @@ export default function HomePage() {
               </button>
             </div>
             <div className="max-h-[60vh] overflow-y-auto rounded-2xl border border-white/5 bg-[rgba(9,12,18,0.6)] p-5 text-sm leading-7 text-muted whitespace-pre-wrap">
-              {rawText.trim() ? rawText : DEFAULT_TEXT}
+              {rawText.trim() || alignmentText || DEFAULT_TEXT}
             </div>
           </div>
         </div>
       ) : null}
+      <audio ref={audioRef} src={audioUrl} preload="metadata" />
     </main>
   );
 }
