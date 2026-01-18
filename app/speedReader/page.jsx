@@ -143,6 +143,37 @@ const SpeedReaderApp = () => {
 
   // --- Render Helpers ---
   const currentWord = words[currentIndex] || "";
+
+  const splitWord = (word) => {
+    const match = word.match(/^(\W*)([\w']+)(\W*)$/);
+    if (!match) {
+      return { lead: "", core: word, tail: "" };
+    }
+    return { lead: match[1], core: match[2], tail: match[3] };
+  };
+
+  const renderWord = (word) => {
+    if (!word) return null;
+    const { lead, core, tail } = splitWord(word);
+    const pivotIndex = Math.max(1, Math.ceil(core.length * 0.35)) - 1;
+    const leftText = core.slice(0, pivotIndex);
+    const rightText = core.slice(pivotIndex + 1);
+    return (
+      <span className="grid w-full grid-cols-[1fr_auto_1fr] items-baseline font-mono">
+        <span className="text-right">
+          {lead ? <span className="text-slate-400/70">{lead}</span> : null}
+          {leftText}
+        </span>
+        <span className="text-rose-400 drop-shadow-[0_0_12px_rgba(248,113,113,0.45)]">
+          {core.charAt(pivotIndex) || ""}
+        </span>
+        <span className="text-left">
+          {rightText}
+          {tail ? <span className="text-slate-400/70">{tail}</span> : null}
+        </span>
+      </span>
+    );
+  };
   
   // Progress Percentage
   const progress = words.length > 0 ? (currentIndex / (words.length - 1)) * 100 : 0;
@@ -180,14 +211,14 @@ const SpeedReaderApp = () => {
             <div className={`absolute bottom-4 left-0 right-0 h-px w-full opacity-10 ${isDarkMode ? 'bg-white' : 'bg-black'}`}></div>
             
             {/* Center Focal Guides (Optional markers) */}
-            <div className="absolute top-0 bottom-0 left-1/2 w-px -translate-x-1/2 opacity-5 bg-red-500 h-full"></div>
+            <div className="absolute top-0 bottom-0 left-1/2 w-px -translate-x-1/2 bg-rose-400/30 h-full"></div>
             <div className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 opacity-5 bg-red-500 w-full"></div>
 
             {/* The Word */}
             <div className="z-10 text-center select-none w-full px-4">
               {words.length > 0 ? (
-                <span className={`font-mono text-5xl md:text-7xl font-semibold tracking-wide ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
-                  {currentWord}
+                <span className={`text-5xl md:text-7xl font-semibold tracking-wide ${isDarkMode ? 'text-white' : 'text-slate-900'}`}>
+                  {renderWord(currentWord)}
                 </span>
               ) : (
                 <span className="text-slate-400 text-xl md:text-2xl">Enter text below to start</span>
