@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   Play, 
@@ -20,7 +22,7 @@ const SpeedReaderApp = () => {
   const [words, setWords] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [wpm, setWpm] = useState(300); // Words Per Minute
+  const [wpm, setWpm] = useState(200); // Words Per Minute
   const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode for better reading focus
   const [showInput, setShowInput] = useState(true);
 
