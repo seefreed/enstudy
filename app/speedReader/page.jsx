@@ -24,7 +24,7 @@ const SpeedReaderApp = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [wpm, setWpm] = useState(200); // Words Per Minute
   const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode for better reading focus
-  const [showInput, setShowInput] = useState(true);
+  const [showInput, setShowInput] = useState(false);
   const [sourceUrl, setSourceUrl] = useState("");
   const [isFetchingUrl, setIsFetchingUrl] = useState(false);
   const [urlError, setUrlError] = useState("");
@@ -340,87 +340,110 @@ const SpeedReaderApp = () => {
                 className={`text-sm flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors
                   ${isDarkMode ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-600'}`}
               >
-                {showInput ? "Hide Text Input" : "Edit Text"}
+                {showInput ? "Close Source Text" : "Open Source Text"}
                 <Type size={16} />
               </button>
             </div>
           </div>
         </div>
+      </main>
 
-        {/* INPUT AREA */}
-        {showInput && (
-          <div className="flex flex-col gap-2 transition-all duration-300 ease-in-out origin-top">
-             <div className="flex justify-between items-center">
-                <label className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Source Text</label>
-                <div className="flex items-center gap-4">
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileUpload}
-                    accept=".txt,.md"
-                    className="hidden"
-                  />
-                  <button 
-                    onClick={triggerFileUpload}
-                    className={`text-xs flex items-center gap-1 font-medium transition-colors ${isDarkMode ? 'text-indigo-400 hover:text-indigo-300' : 'text-indigo-600 hover:text-indigo-700'}`}
-                  >
-                    <Upload size={14} /> Upload .txt/.md
-                  </button>
-                  <div className={`w-px h-3 ${isDarkMode ? 'bg-slate-700' : 'bg-slate-300'}`}></div>
-                  <button 
-                    onClick={clearText}
-                    className="text-xs text-rose-500 hover:text-rose-600 flex items-center gap-1 font-medium"
-                  >
-                    <XCircle size={14} /> Clear
-                  </button>
-                </div>
-             </div>
-             <div className="flex flex-col md:flex-row gap-3">
-               <input
-                 type="url"
-                 value={sourceUrl}
-                 onChange={(e) => setSourceUrl(e.target.value)}
-                 placeholder="https://example.com/article"
-                 className={`flex-1 h-11 px-3 rounded-lg border focus:outline-none focus:ring-2 transition-all text-sm
-                   ${isDarkMode
-                     ? 'bg-slate-900 border-slate-800 focus:ring-indigo-900 text-slate-300 placeholder-slate-700'
-                     : 'bg-white border-slate-200 focus:ring-indigo-100 text-slate-700 placeholder-slate-400'
-                   }`}
-               />
-               <button
-                 onClick={handleFetchUrl}
-                 disabled={isFetchingUrl}
-                 className={`h-11 px-4 rounded-lg text-sm font-medium transition-colors
-                   ${isFetchingUrl
-                     ? 'bg-slate-600 text-slate-200 cursor-not-allowed'
-                     : isDarkMode
-                       ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                       : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                   }`}
-               >
-                 {isFetchingUrl ? "Fetching..." : "Fetch from URL"}
-               </button>
-             </div>
-             {urlError ? (
-               <p className="text-xs text-rose-500">{urlError}</p>
-             ) : null}
+      {/* INPUT MODAL */}
+      {showInput && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setShowInput(false)}
+          ></div>
+          <div
+            className={`relative w-full max-w-3xl rounded-2xl border shadow-2xl p-6 md:p-8 flex flex-col gap-4
+              ${isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-white border-slate-200'}`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Type size={18} className="text-indigo-400" />
+                <h2 className="text-lg font-semibold tracking-tight">Source Text</h2>
+              </div>
+              <button
+                onClick={() => setShowInput(false)}
+                className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-500'}`}
+                title="Close"
+              >
+                <XCircle size={18} />
+              </button>
+            </div>
+
+            <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleFileUpload}
+                  accept=".txt,.md"
+                  className="hidden"
+                />
+                <button
+                  onClick={triggerFileUpload}
+                  className={`text-xs flex items-center gap-1 font-medium transition-colors ${isDarkMode ? 'text-indigo-400 hover:text-indigo-300' : 'text-indigo-600 hover:text-indigo-700'}`}
+                >
+                  <Upload size={14} /> Upload .txt/.md
+                </button>
+                <div className={`w-px h-3 ${isDarkMode ? 'bg-slate-700' : 'bg-slate-300'}`}></div>
+                <button
+                  onClick={clearText}
+                  className="text-xs text-rose-500 hover:text-rose-600 flex items-center gap-1 font-medium"
+                >
+                  <XCircle size={14} /> Clear
+                </button>
+              </div>
+              <p className="text-xs text-slate-500">
+                {words.length} words detected. Estimated time: {Math.ceil(words.length / wpm)} min.
+              </p>
+            </div>
+
+            <div className="flex flex-col md:flex-row gap-3">
+              <input
+                type="url"
+                value={sourceUrl}
+                onChange={(e) => setSourceUrl(e.target.value)}
+                placeholder="https://example.com/article"
+                className={`flex-1 h-11 px-3 rounded-lg border focus:outline-none focus:ring-2 transition-all text-sm
+                  ${isDarkMode
+                    ? 'bg-slate-900 border-slate-800 focus:ring-indigo-900 text-slate-300 placeholder-slate-700'
+                    : 'bg-white border-slate-200 focus:ring-indigo-100 text-slate-700 placeholder-slate-400'
+                  }`}
+              />
+              <button
+                onClick={handleFetchUrl}
+                disabled={isFetchingUrl}
+                className={`h-11 px-4 rounded-lg text-sm font-medium transition-colors
+                  ${isFetchingUrl
+                    ? 'bg-slate-600 text-slate-200 cursor-not-allowed'
+                    : isDarkMode
+                      ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                      : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                  }`}
+              >
+                {isFetchingUrl ? "Fetching..." : "Fetch from URL"}
+              </button>
+            </div>
+            {urlError ? (
+              <p className="text-xs text-rose-500">{urlError}</p>
+            ) : null}
+
             <textarea
               value={inputText}
               onChange={handleTextChange}
               placeholder="Paste the text you want to read here..."
-              className={`w-full h-48 p-4 rounded-xl border focus:outline-none focus:ring-2 transition-all resize-y font-sans text-base leading-relaxed
+              className={`w-full h-56 md:h-64 p-4 rounded-xl border focus:outline-none focus:ring-2 transition-all resize-y font-sans text-base leading-relaxed
                 ${isDarkMode 
                   ? 'bg-slate-900 border-slate-800 focus:ring-indigo-900 text-slate-300 placeholder-slate-700' 
                   : 'bg-white border-slate-200 focus:ring-indigo-100 text-slate-700 placeholder-slate-400'
                 }`}
             />
-             <p className="text-xs text-slate-500">
-               {words.length} words detected. Estimated time: {Math.ceil(words.length / wpm)} min.
-             </p>
           </div>
-        )}
-
-      </main>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className={`py-6 text-center text-sm ${isDarkMode ? 'text-slate-600' : 'text-slate-400'}`}>
