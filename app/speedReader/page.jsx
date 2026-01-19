@@ -346,6 +346,66 @@ const SpeedReaderApp = () => {
             </div>
           </div>
         </div>
+
+        {/* LOAD CONTROLS */}
+        <div className={`p-6 rounded-xl border transition-colors flex flex-col gap-4
+          ${isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-slate-200'}`}
+        >
+          <div className="flex flex-col md:flex-row items-center justify-between gap-3">
+            <label className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Load Text</label>
+            <div className="flex items-center gap-3">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+                accept=".txt,.md"
+                className="hidden"
+              />
+              <button
+                onClick={triggerFileUpload}
+                className={`text-xs flex items-center gap-1 font-medium transition-colors ${isDarkMode ? 'text-indigo-400 hover:text-indigo-300' : 'text-indigo-600 hover:text-indigo-700'}`}
+              >
+                <Upload size={14} /> Upload .txt/.md
+              </button>
+              <div className={`w-px h-3 ${isDarkMode ? 'bg-slate-700' : 'bg-slate-300'}`}></div>
+              <button
+                onClick={clearText}
+                className="text-xs text-rose-500 hover:text-rose-600 flex items-center gap-1 font-medium"
+              >
+                <XCircle size={14} /> Clear
+              </button>
+            </div>
+          </div>
+          <div className="flex flex-col md:flex-row gap-3">
+            <input
+              type="url"
+              value={sourceUrl}
+              onChange={(e) => setSourceUrl(e.target.value)}
+              placeholder="https://example.com/article"
+              className={`flex-1 h-11 px-3 rounded-lg border focus:outline-none focus:ring-2 transition-all text-sm
+                ${isDarkMode
+                  ? 'bg-slate-900 border-slate-800 focus:ring-indigo-900 text-slate-300 placeholder-slate-700'
+                  : 'bg-white border-slate-200 focus:ring-indigo-100 text-slate-700 placeholder-slate-400'
+                }`}
+            />
+            <button
+              onClick={handleFetchUrl}
+              disabled={isFetchingUrl}
+              className={`h-11 px-4 rounded-lg text-sm font-medium transition-colors
+                ${isFetchingUrl
+                  ? 'bg-slate-600 text-slate-200 cursor-not-allowed'
+                  : isDarkMode
+                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                    : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                }`}
+            >
+              {isFetchingUrl ? "Fetching..." : "Fetch from URL"}
+            </button>
+          </div>
+          {urlError ? (
+            <p className="text-xs text-rose-500">{urlError}</p>
+          ) : null}
+        </div>
       </main>
 
       {/* INPUT MODAL */}
@@ -373,64 +433,6 @@ const SpeedReaderApp = () => {
               </button>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleFileUpload}
-                  accept=".txt,.md"
-                  className="hidden"
-                />
-                <button
-                  onClick={triggerFileUpload}
-                  className={`text-xs flex items-center gap-1 font-medium transition-colors ${isDarkMode ? 'text-indigo-400 hover:text-indigo-300' : 'text-indigo-600 hover:text-indigo-700'}`}
-                >
-                  <Upload size={14} /> Upload .txt/.md
-                </button>
-                <div className={`w-px h-3 ${isDarkMode ? 'bg-slate-700' : 'bg-slate-300'}`}></div>
-                <button
-                  onClick={clearText}
-                  className="text-xs text-rose-500 hover:text-rose-600 flex items-center gap-1 font-medium"
-                >
-                  <XCircle size={14} /> Clear
-                </button>
-              </div>
-              <p className="text-xs text-slate-500">
-                {words.length} words detected. Estimated time: {Math.ceil(words.length / wpm)} min.
-              </p>
-            </div>
-
-            <div className="flex flex-col md:flex-row gap-3">
-              <input
-                type="url"
-                value={sourceUrl}
-                onChange={(e) => setSourceUrl(e.target.value)}
-                placeholder="https://example.com/article"
-                className={`flex-1 h-11 px-3 rounded-lg border focus:outline-none focus:ring-2 transition-all text-sm
-                  ${isDarkMode
-                    ? 'bg-slate-900 border-slate-800 focus:ring-indigo-900 text-slate-300 placeholder-slate-700'
-                    : 'bg-white border-slate-200 focus:ring-indigo-100 text-slate-700 placeholder-slate-400'
-                  }`}
-              />
-              <button
-                onClick={handleFetchUrl}
-                disabled={isFetchingUrl}
-                className={`h-11 px-4 rounded-lg text-sm font-medium transition-colors
-                  ${isFetchingUrl
-                    ? 'bg-slate-600 text-slate-200 cursor-not-allowed'
-                    : isDarkMode
-                      ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                      : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                  }`}
-              >
-                {isFetchingUrl ? "Fetching..." : "Fetch from URL"}
-              </button>
-            </div>
-            {urlError ? (
-              <p className="text-xs text-rose-500">{urlError}</p>
-            ) : null}
-
             <textarea
               value={inputText}
               onChange={handleTextChange}
@@ -441,6 +443,9 @@ const SpeedReaderApp = () => {
                   : 'bg-white border-slate-200 focus:ring-indigo-100 text-slate-700 placeholder-slate-400'
                 }`}
             />
+            <p className="text-xs text-slate-500">
+              {words.length} words detected. Estimated time: {Math.ceil(words.length / wpm)} min.
+            </p>
           </div>
         </div>
       )}
