@@ -13,12 +13,12 @@ import {
   XCircle,
   Upload
 } from 'lucide-react';
-import { DEFAULT_TEXT } from "./utils";
+import { fetchDefaultText, DEFAULT_TEXT_FALLBACK } from "./utils";
 
 
 const SpeedReaderApp = () => {
   // --- State ---
-  const [inputText, setInputText] = useState(DEFAULT_TEXT);
+  const [inputText, setInputText] = useState("");
   const [words, setWords] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -34,6 +34,22 @@ const SpeedReaderApp = () => {
   const fileInputRef = useRef(null);
 
   // --- Helpers ---
+  useEffect(() => {
+    let isActive = true;
+
+    fetchDefaultText()
+      .then((text) => {
+        if (isActive) setInputText(text);
+      })
+      .catch(() => {
+        if (isActive) setInputText(DEFAULT_TEXT_FALLBACK);
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
   // Parse text into words, preserving some punctuation logic if needed later
   useEffect(() => {
     const cleanWords = inputText
