@@ -25,6 +25,9 @@ const SpeedReaderApp = () => {
   const [wpm, setWpm] = useState(200); // Words Per Minute
   const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode for better reading focus
   const [showInput, setShowInput] = useState(true);
+  const [sourceUrl, setSourceUrl] = useState("");
+  const [isFetchingUrl, setIsFetchingUrl] = useState(false);
+  const [urlError, setUrlError] = useState("");
 
   // --- Refs ---
   const timerRef = useRef(null);
@@ -127,6 +130,40 @@ const SpeedReaderApp = () => {
 
   const triggerFileUpload = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleFetchUrl = async () => {
+    const trimmed = sourceUrl.trim();
+    if (!trimmed) {
+      setUrlError("Please enter a URL.");
+      return;
+    }
+
+    setIsFetchingUrl(true);
+    setUrlError("");
+
+    try {
+      const response = await fetch("/api/fetch-text", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: trimmed })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setUrlError(data?.error || "Failed to fetch URL.");
+        return;
+      }
+
+      setInputText(data.text || "");
+      setCurrentIndex(0);
+      setIsPlaying(false);
+    } catch (error) {
+      setUrlError("Could not reach the URL fetch service.");
+    } finally {
+      setIsFetchingUrl(false);
+    }
   };
 
   // Keyboard shortcuts
@@ -338,6 +375,35 @@ const SpeedReaderApp = () => {
                   </button>
                 </div>
              </div>
+             <div className="flex flex-col md:flex-row gap-3">
+               <input
+                 type="url"
+                 value={sourceUrl}
+                 onChange={(e) => setSourceUrl(e.target.value)}
+                 placeholder="https://example.com/article"
+                 className={`flex-1 h-11 px-3 rounded-lg border focus:outline-none focus:ring-2 transition-all text-sm
+                   ${isDarkMode
+                     ? 'bg-slate-900 border-slate-800 focus:ring-indigo-900 text-slate-300 placeholder-slate-700'
+                     : 'bg-white border-slate-200 focus:ring-indigo-100 text-slate-700 placeholder-slate-400'
+                   }`}
+               />
+               <button
+                 onClick={handleFetchUrl}
+                 disabled={isFetchingUrl}
+                 className={`h-11 px-4 rounded-lg text-sm font-medium transition-colors
+                   ${isFetchingUrl
+                     ? 'bg-slate-600 text-slate-200 cursor-not-allowed'
+                     : isDarkMode
+                       ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                       : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+                   }`}
+               >
+                 {isFetchingUrl ? "Fetching..." : "Fetch from URL"}
+               </button>
+             </div>
+             {urlError ? (
+               <p className="text-xs text-rose-500">{urlError}</p>
+             ) : null}
             <textarea
               value={inputText}
               onChange={handleTextChange}
