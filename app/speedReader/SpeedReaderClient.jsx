@@ -21,15 +21,7 @@ const SpeedReaderApp = ({ defaultText }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [wpm, setWpm] = useState(250); // Words Per Minute
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window === "undefined") {
-      return true;
-    }
-    const storedTheme = window.localStorage.getItem("speedReaderTheme");
-    if (storedTheme === "light") return false;
-    if (storedTheme === "dark") return true;
-    return true;
-  }); // Default to dark mode for better reading focus
+  const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode for better reading focus
   const [showInput, setShowInput] = useState(false);
   const [sourceUrl, setSourceUrl] = useState("");
   const [isFetchingUrl, setIsFetchingUrl] = useState(false);
@@ -38,11 +30,6 @@ const SpeedReaderApp = ({ defaultText }) => {
   // --- Refs ---
   const timerRef = useRef(null);
   const fileInputRef = useRef(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem("speedReaderTheme", isDarkMode ? "dark" : "light");
-  }, [isDarkMode]);
 
   // Parse text into words, preserving some punctuation logic if needed later
   useEffect(() => {
