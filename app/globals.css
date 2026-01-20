@@ -32,7 +32,8 @@
     color: var(--ink);
     background: radial-gradient(circle at top, #20293a 0%, #141823 60%);
     min-height: 100vh;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   [data-theme="light"] body {

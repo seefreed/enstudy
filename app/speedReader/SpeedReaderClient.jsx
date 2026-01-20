@@ -214,24 +214,33 @@ const SpeedReaderApp = ({ defaultText }) => {
   const progress = words.length > 0 ? (currentIndex / (words.length - 1)) * 100 : 0;
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+    <div className={`min-h-[100dvh] transition-colors duration-300 ${isDarkMode ? 'bg-slate-900 text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
       
+      <a
+        href="#main-content"
+        className="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-4 focus-visible:left-4 focus-visible:z-50 focus-visible:rounded-md focus-visible:bg-indigo-600 focus-visible:px-3 focus-visible:py-2 focus-visible:text-sm focus-visible:text-white focus-visible:outline-none"
+      >
+        Skip to Main Content
+      </a>
+
       {/* Navbar */}
       <header className={`px-6 py-4 flex justify-between items-center border-b ${isDarkMode ? 'border-slate-800' : 'border-slate-200'}`}>
         <div className="flex items-center gap-2">
-          <BookOpen className="w-6 h-6 text-indigo-500" />
+          <BookOpen className="w-6 h-6 text-indigo-500" aria-hidden="true" />
           <h1 className="text-xl font-bold tracking-tight">FocusReader</h1>
         </div>
         <button
+          type="button"
           onClick={() => setIsDarkMode(!isDarkMode)}
-          className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-slate-800 text-yellow-400' : 'hover:bg-slate-200 text-slate-600'}`}
+          aria-label={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          className={`p-2 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-indigo-400/60 focus-visible:outline-none ${isDarkMode ? 'hover:bg-slate-800 text-yellow-400' : 'hover:bg-slate-200 text-slate-600'}`}
           title="Toggle Theme"
         >
-          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          {isDarkMode ? <Sun size={20} aria-hidden="true" /> : <Moon size={20} aria-hidden="true" />}
         </button>
       </header>
 
-      <main className="container mx-auto max-w-4xl px-4 py-8 flex flex-col gap-8">
+      <main id="main-content" className="container mx-auto max-w-4xl px-4 py-8 flex flex-col gap-8">
         
         {/* READER STAGE */}
         <div className="flex flex-col gap-6">
@@ -274,22 +283,26 @@ const SpeedReaderApp = ({ defaultText }) => {
             <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
               <div className="flex items-center gap-3 w-full md:w-auto justify-center md:justify-start">
                 <button
+                  type="button"
                   onClick={handleReset}
-                  className={`p-3 rounded-full transition-all ${isDarkMode ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-500'}`}
+                  aria-label="Restart Reading"
+                  className={`p-3 rounded-full transition-all focus-visible:ring-2 focus-visible:ring-indigo-400/60 focus-visible:outline-none ${isDarkMode ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-500'}`}
                   title="Restart"
                 >
-                  <RotateCcw size={20} />
+                  <RotateCcw size={20} aria-hidden="true" />
                 </button>
 
                 <button
+                  type="button"
                   onClick={togglePlay}
-                  className={`p-4 rounded-full shadow-lg transition-transform active:scale-95 flex items-center justify-center
+                  aria-label={isPlaying ? "Pause Reading" : "Start Reading"}
+                  className={`p-4 rounded-full shadow-lg transition-transform active:scale-95 flex items-center justify-center focus-visible:ring-2 focus-visible:ring-indigo-300/70 focus-visible:outline-none
                     ${isPlaying 
                       ? 'bg-rose-500 hover:bg-rose-600 text-white' 
                       : 'bg-indigo-600 hover:bg-indigo-700 text-white'
                     }`}
                 >
-                  {isPlaying ? <Pause fill="currentColor" size={24} /> : <Play fill="currentColor" size={24} className="ml-1" />}
+                  {isPlaying ? <Pause fill="currentColor" size={24} aria-hidden="true" /> : <Play fill="currentColor" size={24} className="ml-1" aria-hidden="true" />}
                 </button>
               </div>
 
@@ -302,7 +315,9 @@ const SpeedReaderApp = ({ defaultText }) => {
                   max={words.length > 0 ? words.length - 1 : 0}
                   value={currentIndex}
                   onChange={handleSliderChange}
-                  className={`w-full h-2 rounded-lg appearance-none cursor-pointer
+                  id="progressRange"
+                  aria-label="Reading Progress"
+                  className={`w-full h-2 rounded-lg appearance-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300/60
                     ${isDarkMode ? 'bg-slate-800 accent-indigo-500' : 'bg-slate-200 accent-indigo-600'}`}
                 />
                 <span className="text-xs font-mono text-slate-500 w-10">100%</span>
@@ -313,8 +328,10 @@ const SpeedReaderApp = ({ defaultText }) => {
             <div className={`flex flex-col md:flex-row items-center justify-between pt-4 border-t gap-4 ${isDarkMode ? 'border-slate-800' : 'border-slate-100'}`}>
               <div className="flex items-center gap-4 w-full md:w-auto">
                 <div className="flex items-center gap-2">
-                  <Settings size={16} className="text-slate-500" />
-                  <span className="text-sm font-medium text-slate-500">Speed</span>
+                  <Settings size={16} className="text-slate-500" aria-hidden="true" />
+                  <label htmlFor="speedRange" className="text-sm font-medium text-slate-500">
+                    Speed
+                  </label>
                 </div>
                 <div className="flex items-center gap-2 flex-1">
                   <input
@@ -324,7 +341,10 @@ const SpeedReaderApp = ({ defaultText }) => {
                     step="50"
                     value={wpm}
                     onChange={(e) => setWpm(Number(e.target.value))}
-                    className={`flex-1 h-1.5 rounded-lg appearance-none cursor-pointer
+                    id="speedRange"
+                    name="speedRange"
+                    aria-label="Reading Speed"
+                    className={`flex-1 h-1.5 rounded-lg appearance-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60
                       ${isDarkMode ? 'bg-slate-800 accent-emerald-500' : 'bg-slate-200 accent-emerald-600'}`}
                   />
                   <span className={`text-sm font-bold font-mono w-20 text-right ${isDarkMode ? 'text-emerald-400' : 'text-emerald-700'}`}>
@@ -333,13 +353,14 @@ const SpeedReaderApp = ({ defaultText }) => {
                 </div>
               </div>
 
-              <button 
+              <button
+                type="button"
                 onClick={() => setShowInput(!showInput)}
-                className={`text-sm flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors
+                className={`text-sm flex items-center gap-2 px-3 py-1.5 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-indigo-300/70 focus-visible:outline-none
                   ${isDarkMode ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-600'}`}
               >
                 {showInput ? "Close Source Text" : "Open Source Text"}
-                <Type size={16} />
+                <Type size={16} aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -357,39 +378,53 @@ const SpeedReaderApp = ({ defaultText }) => {
                 ref={fileInputRef}
                 onChange={handleFileUpload}
                 accept=".txt,.md"
+                id="textUpload"
+                aria-label="Upload Text File"
                 className="hidden"
               />
               <button
+                type="button"
                 onClick={triggerFileUpload}
-                className={`text-xs flex items-center gap-1 font-medium transition-colors ${isDarkMode ? 'text-indigo-400 hover:text-indigo-300' : 'text-indigo-600 hover:text-indigo-700'}`}
+                className={`text-xs flex items-center gap-1 font-medium transition-colors focus-visible:ring-2 focus-visible:ring-indigo-300/70 focus-visible:outline-none ${isDarkMode ? 'text-indigo-400 hover:text-indigo-300' : 'text-indigo-600 hover:text-indigo-700'}`}
               >
-                <Upload size={14} /> Upload .txt/.md
+                <Upload size={14} aria-hidden="true" /> Upload .txt/.md
               </button>
               <div className={`w-px h-3 ${isDarkMode ? 'bg-slate-700' : 'bg-slate-300'}`}></div>
               <button
+                type="button"
                 onClick={clearText}
-                className="text-xs text-rose-500 hover:text-rose-600 flex items-center gap-1 font-medium"
+                className="text-xs text-rose-500 hover:text-rose-600 flex items-center gap-1 font-medium focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none"
               >
-                <XCircle size={14} /> Clear
+                <XCircle size={14} aria-hidden="true" /> Clear
               </button>
             </div>
           </div>
           <div className="flex flex-col md:flex-row gap-3">
+            <label htmlFor="sourceUrl" className="sr-only">
+              Article URL
+            </label>
             <input
               type="url"
               value={sourceUrl}
               onChange={(e) => setSourceUrl(e.target.value)}
-              placeholder="https://example.com/article"
-              className={`flex-1 h-11 px-3 rounded-lg border focus:outline-none focus:ring-2 transition-all text-sm
+              placeholder="https://example.com/article…"
+              id="sourceUrl"
+              name="sourceUrl"
+              inputMode="url"
+              autoComplete="url"
+              spellCheck={false}
+              aria-label="Article URL"
+              className={`flex-1 h-11 px-3 rounded-lg border focus-visible:outline-none focus-visible:ring-2 transition-all text-sm
                 ${isDarkMode
                   ? 'bg-slate-900 border-slate-800 focus:ring-indigo-900 text-slate-300 placeholder-slate-700'
                   : 'bg-white border-slate-200 focus:ring-indigo-100 text-slate-700 placeholder-slate-400'
                 }`}
             />
             <button
+              type="button"
               onClick={handleFetchUrl}
               disabled={isFetchingUrl}
-              className={`h-11 px-4 rounded-lg text-sm font-medium transition-colors
+              className={`h-11 px-4 rounded-lg text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-indigo-300/70 focus-visible:outline-none
                 ${isFetchingUrl
                   ? 'bg-slate-600 text-slate-200 cursor-not-allowed'
                   : isDarkMode
@@ -397,11 +432,11 @@ const SpeedReaderApp = ({ defaultText }) => {
                     : 'bg-indigo-600 hover:bg-indigo-700 text-white'
                 }`}
             >
-              {isFetchingUrl ? "Fetching..." : "Fetch from URL"}
+              {isFetchingUrl ? "Fetching…" : "Fetch from URL"}
             </button>
           </div>
           {urlError ? (
-            <p className="text-xs text-rose-500">{urlError}</p>
+            <p className="text-xs text-rose-500" aria-live="polite">{urlError}</p>
           ) : null}
         </div>
 
@@ -410,33 +445,43 @@ const SpeedReaderApp = ({ defaultText }) => {
       {/* INPUT MODAL */}
       {showInput && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6">
-          <div
+          <button
+            type="button"
+            aria-label="Close Source Text"
             className="absolute inset-0 bg-black/40 backdrop-blur-sm"
             onClick={() => setShowInput(false)}
-          ></div>
+          />
           <div
-            className={`relative w-full max-w-3xl rounded-2xl border shadow-2xl p-6 md:p-8 flex flex-col gap-4
+            className={`relative w-full max-w-3xl rounded-2xl border shadow-2xl p-6 md:p-8 flex flex-col gap-4 overscroll-contain
               ${isDarkMode ? 'bg-slate-950 border-slate-800' : 'bg-white border-slate-200'}`}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Type size={18} className="text-indigo-400" />
+                <Type size={18} className="text-indigo-400" aria-hidden="true" />
                 <h2 className="text-lg font-semibold tracking-tight">Source Text</h2>
               </div>
               <button
+                type="button"
                 onClick={() => setShowInput(false)}
-                className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-500'}`}
+                aria-label="Close Source Text"
+                className={`p-2 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-indigo-300/70 focus-visible:outline-none ${isDarkMode ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-500'}`}
                 title="Close"
               >
-                <XCircle size={18} />
+                <XCircle size={18} aria-hidden="true" />
               </button>
             </div>
 
+            <label htmlFor="sourceText" className="sr-only">
+              Source Text
+            </label>
             <textarea
               value={inputText}
               onChange={handleTextChange}
-              placeholder="Paste the text you want to read here..."
-              className={`w-full h-56 md:h-64 p-4 rounded-xl border focus:outline-none focus:ring-2 transition-all resize-y font-sans text-base leading-relaxed
+              placeholder="Paste the text you want to read here…"
+              id="sourceText"
+              name="sourceText"
+              aria-label="Source Text"
+              className={`w-full h-56 md:h-64 p-4 rounded-xl border focus-visible:outline-none focus-visible:ring-2 transition-all resize-y font-sans text-base leading-relaxed
                 ${isDarkMode 
                   ? 'bg-slate-900 border-slate-800 focus:ring-indigo-900 text-slate-300 placeholder-slate-700' 
                   : 'bg-white border-slate-200 focus:ring-indigo-100 text-slate-700 placeholder-slate-400'
