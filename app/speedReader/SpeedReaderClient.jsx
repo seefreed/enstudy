@@ -21,7 +21,10 @@ const SpeedReaderApp = ({ defaultText }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [wpm, setWpm] = useState(200); // Words Per Minute
-  const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode for better reading focus
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const storedTheme = window.localStorage.getItem("speedReaderTheme");
+    return storedTheme ? storedTheme === "dark" : true;
+  }); // Default to dark mode for better reading focus
   const [showInput, setShowInput] = useState(false);
   const [sourceUrl, setSourceUrl] = useState("");
   const [isFetchingUrl, setIsFetchingUrl] = useState(false);
@@ -31,7 +34,7 @@ const SpeedReaderApp = ({ defaultText }) => {
   const timerRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  // --- Helpers ---
+
   // Parse text into words, preserving some punctuation logic if needed later
   useEffect(() => {
     const cleanWords = inputText
@@ -84,6 +87,12 @@ const SpeedReaderApp = ({ defaultText }) => {
       setShowInput(false);
     }
   };
+
+  const darkModeFunc = () => {
+    setIsDarkMode(!isDarkMode);
+    window.localStorage.setItem("speedReaderTheme", !isDarkMode ? "dark" : "light");
+
+  }
 
   const handleReset = () => {
     setIsPlaying(false);
@@ -231,7 +240,7 @@ const SpeedReaderApp = ({ defaultText }) => {
         </div>
         <button
           type="button"
-          onClick={() => setIsDarkMode(!isDarkMode)}
+          onClick={darkModeFunc}
           aria-label={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
           className={`p-2 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-indigo-400/60 focus-visible:outline-none ${isDarkMode ? 'hover:bg-slate-800 text-yellow-400' : 'hover:bg-slate-200 text-slate-600'}`}
           title="Toggle Theme"
