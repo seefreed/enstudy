@@ -20,10 +20,15 @@ const SpeedReaderApp = ({ defaultText }) => {
   const [words, setWords] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [wpm, setWpm] = useState(200); // Words Per Minute
+  const [wpm, setWpm] = useState(250); // Words Per Minute
   const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window === "undefined") {
+      return true;
+    }
     const storedTheme = window.localStorage.getItem("speedReaderTheme");
-    return storedTheme ? storedTheme === "dark" : true;
+    if (storedTheme === "light") return false;
+    if (storedTheme === "dark") return true;
+    return true;
   }); // Default to dark mode for better reading focus
   const [showInput, setShowInput] = useState(false);
   const [sourceUrl, setSourceUrl] = useState("");
@@ -34,6 +39,10 @@ const SpeedReaderApp = ({ defaultText }) => {
   const timerRef = useRef(null);
   const fileInputRef = useRef(null);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("speedReaderTheme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
 
   // Parse text into words, preserving some punctuation logic if needed later
   useEffect(() => {
@@ -89,10 +98,8 @@ const SpeedReaderApp = ({ defaultText }) => {
   };
 
   const darkModeFunc = () => {
-    setIsDarkMode(!isDarkMode);
-    window.localStorage.setItem("speedReaderTheme", !isDarkMode ? "dark" : "light");
-
-  }
+    setIsDarkMode((prev) => !prev);
+  };
 
   const handleReset = () => {
     setIsPlaying(false);
@@ -441,7 +448,7 @@ const SpeedReaderApp = ({ defaultText }) => {
                     : 'bg-indigo-600 hover:bg-indigo-700 text-white'
                 }`}
             >
-              {isFetchingUrl ? "Fetching…" : "Fetch from URL"}
+              {isFetchingUrl ? "Fetching…" : "Fetch"}
             </button>
           </div>
           {urlError ? (
