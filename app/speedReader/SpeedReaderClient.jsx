@@ -244,7 +244,7 @@ const SpeedReaderApp = ({ defaultText }) => {
         
         {/* READER STAGE */}
         <div className="flex flex-col gap-6">
-          <div className={`relative flex items-center justify-center h-64 md:h-80 rounded-2xl shadow-xl transition-all border-2 
+          <div className={`relative flex items-center justify-center h-64 md:h-80 rounded-2xl shadow-xl transition-colors transition-shadow border-2 
             ${isDarkMode 
               ? 'bg-slate-950 border-slate-800 shadow-indigo-900/10' 
               : 'bg-white border-slate-200 shadow-indigo-100'
@@ -286,7 +286,7 @@ const SpeedReaderApp = ({ defaultText }) => {
                   type="button"
                   onClick={handleReset}
                   aria-label="Restart Reading"
-                  className={`p-3 rounded-full transition-all focus-visible:ring-2 focus-visible:ring-indigo-400/60 focus-visible:outline-none ${isDarkMode ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-500'}`}
+                  className={`p-3 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-indigo-400/60 focus-visible:outline-none ${isDarkMode ? 'hover:bg-slate-800 text-slate-400' : 'hover:bg-slate-100 text-slate-500'}`}
                   title="Restart"
                 >
                   <RotateCcw size={20} aria-hidden="true" />
@@ -399,7 +399,7 @@ const SpeedReaderApp = ({ defaultText }) => {
               </button>
             </div>
           </div>
-          <div className="flex flex-col md:flex-row gap-3">
+          <div className="flex flex-col md:flex-row gap-3 md:items-center">
             <label htmlFor="sourceUrl" className="sr-only">
               Article URL
             </label>
@@ -414,7 +414,7 @@ const SpeedReaderApp = ({ defaultText }) => {
               autoComplete="url"
               spellCheck={false}
               aria-label="Article URL"
-              className={`flex-1 h-11 px-3 rounded-lg border focus-visible:outline-none focus-visible:ring-2 transition-all text-sm
+              className={`min-w-0 w-full h-12 md:h-11 px-3 rounded-lg border focus-visible:outline-none focus-visible:ring-2 transition-colors text-base md:text-sm
                 ${isDarkMode
                   ? 'bg-slate-900 border-slate-800 focus:ring-indigo-900 text-slate-300 placeholder-slate-700'
                   : 'bg-white border-slate-200 focus:ring-indigo-100 text-slate-700 placeholder-slate-400'
@@ -424,7 +424,7 @@ const SpeedReaderApp = ({ defaultText }) => {
               type="button"
               onClick={handleFetchUrl}
               disabled={isFetchingUrl}
-              className={`h-11 px-4 rounded-lg text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-indigo-300/70 focus-visible:outline-none
+              className={`h-12 md:h-11 w-full md:w-auto px-4 rounded-lg text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-indigo-300/70 focus-visible:outline-none
                 ${isFetchingUrl
                   ? 'bg-slate-600 text-slate-200 cursor-not-allowed'
                   : isDarkMode
@@ -481,7 +481,7 @@ const SpeedReaderApp = ({ defaultText }) => {
               id="sourceText"
               name="sourceText"
               aria-label="Source Text"
-              className={`w-full h-56 md:h-64 p-4 rounded-xl border focus-visible:outline-none focus-visible:ring-2 transition-all resize-y font-sans text-base leading-relaxed
+              className={`w-full h-56 md:h-64 p-4 rounded-xl border focus-visible:outline-none focus-visible:ring-2 transition-colors resize-y font-sans text-base leading-relaxed
                 ${isDarkMode 
                   ? 'bg-slate-900 border-slate-800 focus:ring-indigo-900 text-slate-300 placeholder-slate-700' 
                   : 'bg-white border-slate-200 focus:ring-indigo-100 text-slate-700 placeholder-slate-400'
