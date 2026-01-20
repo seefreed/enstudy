@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useTransition } from 'react';
+import { updateDisplayMode } from "./actions";
 import { 
   Play, 
   Pause, 
@@ -23,6 +24,7 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
   const [wpm, setWpm] = useState(250); // Words Per Minute
   const [isDarkMode, setIsDarkMode] = useState(initialDisplayMode !== "light"); // Default to dark mode for better reading focus
   const [showInput, setShowInput] = useState(false);
+  const [, startTransition] = useTransition();
   const [sourceUrl, setSourceUrl] = useState("");
   const [isFetchingUrl, setIsFetchingUrl] = useState(false);
   const [urlError, setUrlError] = useState("");
@@ -32,16 +34,14 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
   const fileInputRef = useRef(null);
   const isDarkModeRef = useRef(isDarkMode);
 
-  const persistTheme = async (displayMode) => {
-    try {
-      await fetch("/api/display-mode", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ displayMode })
-      });
-    } catch (error) {
-      // No-op: avoid blocking UI on persistence failure.
-    }
+  const persistTheme = (displayMode) => {
+    startTransition(async () => {
+      try {
+        await updateDisplayMode(displayMode);
+      } catch (error) {
+        // No-op: avoid blocking UI on persistence failure.
+      }
+    });
   };
 
   // Parse text into words, preserving some punctuation logic if needed later
