@@ -21,16 +21,16 @@ importers:
         specifier: ^0.452.0
         version: 0.452.0(react@19.2.3)
       next:
-        specifier: 15.5.9
+        specifier: ^15.0.0
         version: 15.5.9(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       pdfjs-dist:
         specifier: 4.4.168
         version: 4.4.168
       react:
-        specifier: 19.2.3
+        specifier: ^19.0.0
         version: 19.2.3
       react-dom:
-        specifier: 19.2.3
+        specifier: ^19.0.0
         version: 19.2.3(react@19.2.3)
       turndown:
         specifier: ^7.2.2
