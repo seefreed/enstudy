@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback, useTransition } from 'react';
-import { updateDisplayMode } from "./actions";
+import { getDisplayMode, updateDisplayMode } from "./actions";
 import { 
   Play, 
   Pause, 
@@ -33,6 +33,8 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
   const timerRef = useRef(null);
   const fileInputRef = useRef(null);
   const isDarkModeRef = useRef(isDarkMode);
+  const didRequestThemeRef = useRef(false);
+  const didToggleThemeRef = useRef(false);
 
   const persistTheme = (displayMode) => {
     startTransition(async () => {
@@ -100,9 +102,29 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
   const darkModeFunc = () => {
     const nextIsDark = !isDarkModeRef.current;
     isDarkModeRef.current = nextIsDark;
+    didToggleThemeRef.current = true;
     setIsDarkMode(nextIsDark);
     persistTheme(nextIsDark ? "dark" : "light");
   };
+
+  useEffect(() => {
+    if (didRequestThemeRef.current) return;
+    didRequestThemeRef.current = true;
+
+    startTransition(async () => {
+      try {
+        const displayMode = await getDisplayMode();
+        if (didToggleThemeRef.current) return;
+        if (displayMode === "dark" || displayMode === "light") {
+          const nextIsDark = displayMode === "dark";
+          isDarkModeRef.current = nextIsDark;
+          setIsDarkMode(nextIsDark);
+        }
+      } catch (error) {
+        // No-op: keep default theme if fetch fails.
+      }
+    });
+  }, [startTransition]);
 
   useEffect(() => {
     isDarkModeRef.current = isDarkMode;

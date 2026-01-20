@@ -43,3 +43,18 @@ export async function updateDisplayMode(displayMode) {
 
   return { ok: true, updated: false };
 }
+
+export async function getDisplayMode() {
+  const { data, error } = await supabaseServer
+    .from(TABLE_NAME)
+    .select("display_mode, created_at")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data?.display_mode ?? null;
+}
