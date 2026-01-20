@@ -14,14 +14,14 @@ import {
   Upload
 } from 'lucide-react';
 
-const SpeedReaderApp = ({ defaultText }) => {
+const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
   // --- State ---
   const [inputText, setInputText] = useState(defaultText);
   const [words, setWords] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [wpm, setWpm] = useState(250); // Words Per Minute
-  const [isDarkMode, setIsDarkMode] = useState(true); // Default to dark mode for better reading focus
+  const [isDarkMode, setIsDarkMode] = useState(initialDisplayMode !== "light"); // Default to dark mode for better reading focus
   const [showInput, setShowInput] = useState(false);
   const [sourceUrl, setSourceUrl] = useState("");
   const [isFetchingUrl, setIsFetchingUrl] = useState(false);
@@ -30,6 +30,17 @@ const SpeedReaderApp = ({ defaultText }) => {
   // --- Refs ---
   const timerRef = useRef(null);
   const fileInputRef = useRef(null);
+  const persistTheme = async (displayMode) => {
+    try {
+      await fetch("/api/display-mode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ displayMode })
+      });
+    } catch (error) {
+      // No-op: avoid blocking UI on persistence failure.
+    }
+  };
 
   // Parse text into words, preserving some punctuation logic if needed later
   useEffect(() => {
@@ -85,7 +96,11 @@ const SpeedReaderApp = ({ defaultText }) => {
   };
 
   const darkModeFunc = () => {
-    setIsDarkMode((prev) => !prev);
+    setIsDarkMode((prev) => {
+      const nextIsDark = !prev;
+      persistTheme(nextIsDark ? "dark" : "light");
+      return nextIsDark;
+    });
   };
 
   const handleReset = () => {
