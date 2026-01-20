@@ -39,6 +39,11 @@ const SpeedReaderApp = ({ defaultText }) => {
   const timerRef = useRef(null);
   const fileInputRef = useRef(null);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("speedReaderTheme", isDarkMode ? "dark" : "light");
+  }, [isDarkMode]);
+
   // Parse text into words, preserving some punctuation logic if needed later
   useEffect(() => {
     const cleanWords = inputText
@@ -94,7 +99,6 @@ const SpeedReaderApp = ({ defaultText }) => {
 
   const darkModeFunc = () => {
     setIsDarkMode((prev) => !prev);
-    window.localStorage.setItem("speedReaderTheme", !isDarkMode ? "dark" : "light");
   };
 
   const handleReset = () => {
