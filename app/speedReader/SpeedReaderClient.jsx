@@ -30,7 +30,7 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
   // --- Refs ---
   const timerRef = useRef(null);
   const fileInputRef = useRef(null);
-  const didPersistThemeRef = useRef(false);
+  const isDarkModeRef = useRef(isDarkMode);
 
   const persistTheme = async (displayMode) => {
     try {
@@ -98,15 +98,14 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
   };
 
   const darkModeFunc = () => {
-    setIsDarkMode((prev) => !prev);
+    const nextIsDark = !isDarkModeRef.current;
+    isDarkModeRef.current = nextIsDark;
+    setIsDarkMode(nextIsDark);
+    persistTheme(nextIsDark ? "dark" : "light");
   };
 
   useEffect(() => {
-    if (!didPersistThemeRef.current) {
-      didPersistThemeRef.current = true;
-      return;
-    }
-    persistTheme(isDarkMode ? "dark" : "light");
+    isDarkModeRef.current = isDarkMode;
   }, [isDarkMode]);
 
   const handleReset = () => {
