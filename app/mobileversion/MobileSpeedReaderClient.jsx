@@ -373,6 +373,45 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
         </section>
 
         <section
+          className={`rounded-[28px] border p-4 shadow-[0_12px_40px_rgba(8,12,18,0.35)] backdrop-blur ${
+            isDarkMode ? "border-white/10 bg-black/40" : "border-slate-200 bg-white/85"
+          }`}
+        >
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={handleReset}
+              aria-label="Restart Reading"
+              className={`rounded-full border px-3 py-2 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none ${
+                isDarkMode ? "border-slate-600 text-slate-200 hover:border-rose-300/70" : "border-slate-200 text-slate-600 hover:border-rose-400/70"
+              }`}
+            >
+              <RotateCcw size={18} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={togglePlay}
+              aria-label={isPlaying ? "Pause Reading" : "Start Reading"}
+              className={`flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-[1.03] focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none active:scale-95 ${
+                isPlaying ? "bg-rose-500" : "bg-indigo-600"
+              }`}
+            >
+              {isPlaying ? <Pause fill="currentColor" size={24} aria-hidden="true" /> : <Play fill="currentColor" size={24} className="ml-0.5" aria-hidden="true" />}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowInput(true)}
+              aria-label="Open Source Text"
+              className={`rounded-full border px-3 py-2 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none ${
+                isDarkMode ? "border-slate-600 text-slate-200 hover:border-rose-300/70" : "border-slate-200 text-slate-600 hover:border-rose-400/70"
+              }`}
+            >
+              <Type size={18} aria-hidden="true" />
+            </button>
+          </div>
+        </section>
+
+        <section
           className={`rounded-[24px] border p-4 backdrop-blur ${
             isDarkMode ? "border-white/10 bg-white/5" : "border-slate-200 bg-white/80"
           }`}
@@ -457,46 +496,8 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
             </button>
           </div>
         </section>
-      </main>
 
-      <footer className="fixed bottom-0 left-0 right-0 z-20 px-5 pb-6">
-        <div
-          className={`flex items-center justify-between rounded-[28px] border p-4 shadow-[0_12px_40px_rgba(8,12,18,0.35)] backdrop-blur ${
-            isDarkMode ? "border-white/10 bg-black/40" : "border-slate-200 bg-white/85"
-          }`}
-        >
-          <button
-            type="button"
-            onClick={handleReset}
-            aria-label="Restart Reading"
-            className={`rounded-full border px-3 py-2 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none ${
-              isDarkMode ? "border-slate-600 text-slate-200 hover:border-rose-300/70" : "border-slate-200 text-slate-600 hover:border-rose-400/70"
-            }`}
-          >
-            <RotateCcw size={18} aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            onClick={togglePlay}
-            aria-label={isPlaying ? "Pause Reading" : "Start Reading"}
-            className={`flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-[1.03] focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none active:scale-95 ${
-              isPlaying ? "bg-rose-500" : "bg-indigo-600"
-            }`}
-          >
-            {isPlaying ? <Pause fill="currentColor" size={24} aria-hidden="true" /> : <Play fill="currentColor" size={24} className="ml-0.5" aria-hidden="true" />}
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowInput(true)}
-            aria-label="Open Source Text"
-            className={`rounded-full border px-3 py-2 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none ${
-              isDarkMode ? "border-slate-600 text-slate-200 hover:border-rose-300/70" : "border-slate-200 text-slate-600 hover:border-rose-400/70"
-            }`}
-          >
-            <Type size={18} aria-hidden="true" />
-          </button>
-        </div>
-      </footer>
+      </main>
 
       <input
         type="file"
