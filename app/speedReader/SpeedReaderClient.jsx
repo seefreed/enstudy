@@ -12,7 +12,8 @@ import {
   Type, 
   BookOpen,
   XCircle,
-  Upload
+  Upload,
+  Crosshair
 } from 'lucide-react';
 
 const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
@@ -23,6 +24,7 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [wpm, setWpm] = useState(250); // Words Per Minute
   const [isDarkMode, setIsDarkMode] = useState(initialDisplayMode !== "light"); // Default to dark mode for better reading focus
+  const [showAnchors, setShowAnchors] = useState(true);
   const [showInput, setShowInput] = useState(false);
   const [, startTransition] = useTransition();
   const [sourceUrl, setSourceUrl] = useState("");
@@ -274,15 +276,26 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
           <BookOpen className="w-6 h-6 text-indigo-500" aria-hidden="true" />
           <h1 className="text-xl font-bold tracking-tight">FocusReader</h1>
         </div>
-        <button
-          type="button"
-          onClick={darkModeFunc}
-          aria-label={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-          className={`p-2 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-indigo-400/60 focus-visible:outline-none ${isDarkMode ? 'hover:bg-slate-800 text-yellow-400' : 'hover:bg-slate-200 text-slate-600'}`}
-          title="Toggle Theme"
-        >
-          {isDarkMode ? <Sun size={20} aria-hidden="true" /> : <Moon size={20} aria-hidden="true" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowAnchors((prev) => !prev)}
+            aria-label={showAnchors ? "Hide Anchor Guides" : "Show Anchor Guides"}
+            className={`p-2 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-indigo-400/60 focus-visible:outline-none ${isDarkMode ? 'hover:bg-slate-800 text-indigo-300' : 'hover:bg-slate-200 text-slate-600'}`}
+            title={showAnchors ? "Hide Guides" : "Show Guides"}
+          >
+            <Crosshair size={20} aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            onClick={darkModeFunc}
+            aria-label={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            className={`p-2 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-indigo-400/60 focus-visible:outline-none ${isDarkMode ? 'hover:bg-slate-800 text-yellow-400' : 'hover:bg-slate-200 text-slate-600'}`}
+            title="Toggle Theme"
+          >
+            {isDarkMode ? <Sun size={20} aria-hidden="true" /> : <Moon size={20} aria-hidden="true" />}
+          </button>
+        </div>
       </header>
 
       <main id="main-content" className="container mx-auto max-w-4xl px-4 py-8 flex flex-col gap-8">
@@ -295,13 +308,17 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
               : 'bg-white border-slate-200 shadow-indigo-100'
             }`}
           >
-            {/* Visual Guide Lines */}
-            <div className={`absolute top-4 left-0 right-0 h-px w-full opacity-10 ${isDarkMode ? 'bg-white' : 'bg-black'}`}></div>
-            <div className={`absolute bottom-4 left-0 right-0 h-px w-full opacity-10 ${isDarkMode ? 'bg-white' : 'bg-black'}`}></div>
-            
-            {/* Center Focal Guides (Optional markers) */}
-            <div className="absolute top-0 bottom-0 left-1/2 w-px -translate-x-1/2 bg-rose-400/30 h-full"></div>
-            <div className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 opacity-5 bg-red-500 w-full"></div>
+            {showAnchors ? (
+              <>
+                {/* Visual Guide Lines */}
+                <div className={`absolute top-4 left-0 right-0 h-px w-full opacity-10 ${isDarkMode ? 'bg-white' : 'bg-black'}`}></div>
+                <div className={`absolute bottom-4 left-0 right-0 h-px w-full opacity-10 ${isDarkMode ? 'bg-white' : 'bg-black'}`}></div>
+                
+                {/* Center Focal Guides (Optional markers) */}
+                <div className="absolute top-0 bottom-0 left-1/2 w-px -translate-x-1/2 bg-rose-400/30 h-full"></div>
+                <div className="absolute left-0 right-0 top-1/2 h-px -translate-y-1/2 opacity-5 bg-red-500 w-full"></div>
+              </>
+            ) : null}
 
             {/* The Word */}
             <div className="z-10 text-center select-none w-full px-4">
