@@ -234,7 +234,7 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
     if (!word) return null;
     return (
       <span
-        className={`block w-full text-center font-mono ${
+        className={`block w-full max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-center font-mono ${
           isDarkMode ? "text-slate-100" : "text-slate-900"
         }`}
       >
@@ -298,11 +298,11 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
       </header>
 
       <main id="reader" className="relative z-10 mt-6 grid gap-5">
-        <section
-          className={`rounded-[28px] border p-4 shadow-[0_20px_60px_rgba(8,12,18,0.35)] backdrop-blur ${
-            isDarkMode ? "border-white/10 bg-white/5" : "border-slate-200 bg-white/80"
-          }`}
-        >
+          <section
+            className={`rounded-[28px] border p-4 shadow-[0_20px_60px_rgba(8,12,18,0.35)] backdrop-blur overflow-hidden ${
+              isDarkMode ? "border-white/10 bg-white/5" : "border-slate-200 bg-white/80"
+            }`}
+          >
           <div className={`flex items-center justify-between text-xs uppercase tracking-[0.3em] ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>
             <span>Progress</span>
             <span className="font-mono tabular-nums">
@@ -324,12 +324,12 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
               </>
             ) : null}
 
-            <div className="text-center">
-              {words.length > 0 ? (
-                <div className="text-4xl font-semibold tracking-wide" style={{ fontFamily: "var(--font-display)" }}>
-                  {renderWord(currentWord)}
-                </div>
-              ) : (
+              <div className="text-center w-full overflow-hidden">
+                {words.length > 0 ? (
+                  <div className="text-4xl font-semibold tracking-wide" style={{ fontFamily: "var(--font-display)" }}>
+                    {renderWord(currentWord)}
+                  </div>
+                ) : (
                 <p className={`${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>
                   Paste or load text to begin.
                 </p>
