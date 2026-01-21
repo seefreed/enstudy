@@ -244,14 +244,14 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
 
     return (
       <span className="grid w-full grid-cols-[1fr_auto_1fr] items-baseline break-words font-mono">
-        <span className="text-right">
+        <span className={`text-right ${isDarkMode ? "text-slate-100" : "text-slate-900"}`}>
           {lead ? <span className="text-slate-400/70">{lead}</span> : null}
           {leftText}
         </span>
         <span className={showAnchors ? "text-rose-400 drop-shadow-[0_0_12px_rgba(248,113,113,0.45)]" : "text-slate-900"}>
           {core.charAt(pivotIndex) || ""}
         </span>
-        <span className="text-left">
+        <span className={`text-left ${isDarkMode ? "text-slate-100" : "text-slate-900"}`}>
           {rightText}
           {tail ? <span className="text-slate-400/70">{tail}</span> : null}
         </span>
@@ -286,7 +286,7 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
       <header className="relative z-10 flex items-center justify-between">
         <div>
           <p className={`text-[10px] uppercase tracking-[0.4em] ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>
-            Mobile Focus
+             
           </p>
         </div>
         <div className="flex items-center gap-2">
