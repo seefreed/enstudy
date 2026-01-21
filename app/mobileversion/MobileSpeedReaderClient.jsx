@@ -572,7 +572,7 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
             onClick={() => setShowInput(false)}
           />
           <div
-            className={`absolute bottom-0 left-0 right-0 rounded-t-[28px] border px-5 pb-8 pt-6 shadow-[0_-20px_60px_rgba(8,12,18,0.5)] overscroll-contain ${
+            className={`absolute bottom-0 left-0 right-0 min-h-[80vh] rounded-t-[28px] border px-5 pb-8 pt-6 shadow-[0_-20px_60px_rgba(8,12,18,0.5)] overscroll-contain flex flex-col ${
               isDarkMode ? "border-white/10 bg-slate-950/95" : "border-slate-200 bg-white"
             }`}
           >
@@ -608,7 +608,7 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
               name="sourceTextMobile"
               aria-label="Source Text"
               autoComplete="off"
-              className={`mt-4 h-40 w-full rounded-2xl border p-4 text-base leading-relaxed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 ${
+              className={`mt-4 min-h-0 flex-1 w-full rounded-2xl border p-4 text-base leading-relaxed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 ${
                 isDarkMode ? "border-white/10 bg-slate-900/80 text-slate-200" : "border-slate-200 bg-white text-slate-800"
               }`}
             />
