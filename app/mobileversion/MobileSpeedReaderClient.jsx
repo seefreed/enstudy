@@ -10,7 +10,9 @@ import {
   Sun,
   Type,
   Upload,
-  Link
+  Link,
+  XCircle,
+  FileText
 } from "lucide-react";
 
 const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
@@ -389,7 +391,7 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
                 isDarkMode ? "border-slate-600 text-slate-200 hover:border-rose-300/70" : "border-slate-200 text-slate-600 hover:border-rose-400/70"
               }`}
             >
-              <Type size={18} aria-hidden="true" />
+              <FileText size={18} aria-hidden="true" />
             </button>
           </div>
         </section>
@@ -581,19 +583,17 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
                 <p className={`text-[10px] uppercase tracking-[0.3em] ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>
                   Source Text
                 </p>
-                <h2 className="text-lg font-semibold" style={{ textWrap: "balance" }}>
-                  Edit & Load
-                </h2>
+          
               </div>
               <button
                 type="button"
                 onClick={() => setShowInput(false)}
                 aria-label="Close Source Text"
-                className={`rounded-full border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none ${
-                  isDarkMode ? "border-slate-700 text-slate-200 hover:border-rose-300/70" : "border-slate-200 text-slate-600 hover:border-rose-400/70"
+                className={`rounded-full px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none ${
+                  isDarkMode ? "text-slate-200 hover:text-rose-200" : "text-slate-600 hover:text-rose-600"
                 }`}
               >
-                <Type size={18} aria-hidden="true" />
+                <XCircle size={18} aria-hidden="true" />
               </button>
             </div>
 
