@@ -335,9 +335,8 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
           >
             {showAnchors ? (
               <>
-                <div className={`absolute left-4 right-4 top-6 h-px opacity-20 ${isDarkMode ? "bg-white" : "bg-black"}`} />
-                <div className={`absolute bottom-6 left-4 right-4 h-px opacity-20 ${isDarkMode ? "bg-white" : "bg-black"}`} />
-                <div className="absolute left-1/2 top-6 bottom-6 w-px -translate-x-1/2 bg-rose-400/40" />
+                <div className={`absolute left-6 right-6 top-1/2 h-px -translate-y-1/2 opacity-25 bg-rose-400/40`} />
+                <div className="absolute left-1/2 top-6 bottom-6 w-px -translate-x-1/2 opacity-25 bg-rose-400/40" />
               </>
             ) : null}
 
