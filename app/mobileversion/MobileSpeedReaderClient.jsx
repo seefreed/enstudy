@@ -288,12 +288,6 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
           <p className={`text-[10px] uppercase tracking-[0.4em] ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>
             Mobile Focus
           </p>
-          <h1
-            className="text-2xl font-semibold"
-            style={{ fontFamily: "var(--font-display)", textWrap: "balance" }}
-          >
-            Pulse Reader
-          </h1>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -573,22 +567,14 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
                 <button
                   type="button"
                   onClick={triggerFileUpload}
-                  className={`flex-1 rounded-2xl border px-4 py-3 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none ${
+                  className={`flex-1 rounded-2xl border px-4 py-3 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none flex justify-center ${
                     isDarkMode
                       ? "border-white/10 bg-white/5 text-slate-200 hover:bg-white/10"
                       : "border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-50"
                   }`}
                 >
-                  <Upload size={16} aria-hidden="true" /> Upload .txt/.md
-                </button>
-                <button
-                  type="button"
-                  onClick={clearText}
-                  className={`rounded-2xl border px-4 py-3 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none ${
-                    isDarkMode ? "border-rose-500/40 text-rose-300 hover:border-rose-300/80" : "border-rose-400 text-rose-600 hover:border-rose-500"
-                  }`}
-                >
-                  Clear
+                  <Upload size={16} aria-hidden="true" />
+                  <span className="ml-1">Upload .txt/.md</span>
                 </button>
               </div>
 
