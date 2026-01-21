@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState, useTransition } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Crosshair,
   Moon,
@@ -12,7 +12,6 @@ import {
   Upload,
   Link
 } from "lucide-react";
-import { getDisplayMode, updateDisplayMode } from "../speedReader/actions";
 
 const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
   const [inputText, setInputText] = useState(defaultText);
@@ -29,7 +28,7 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
   const [selectedTextFile, setSelectedTextFile] = useState("");
   const [isLoadingTextFile, setIsLoadingTextFile] = useState(false);
   const [textFileError, setTextFileError] = useState("");
-  const [, startTransition] = useTransition();
+  const THEME_STORAGE_KEY = "speed-reader-display-mode";
 
   const timerRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -38,13 +37,11 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
   const didToggleThemeRef = useRef(false);
 
   const persistTheme = (displayMode) => {
-    startTransition(async () => {
-      try {
-        await updateDisplayMode(displayMode);
-      } catch (error) {
-        // No-op: keep UI responsive if persistence fails.
-      }
-    });
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, displayMode);
+    } catch (error) {
+      // No-op: keep UI responsive if storage fails.
+    }
   };
 
   useEffect(() => {
@@ -105,20 +102,18 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
     if (didRequestThemeRef.current) return;
     didRequestThemeRef.current = true;
 
-    startTransition(async () => {
-      try {
-        const displayMode = await getDisplayMode();
-        if (didToggleThemeRef.current) return;
-        if (displayMode === "dark" || displayMode === "light") {
-          const nextIsDark = displayMode === "dark";
-          isDarkModeRef.current = nextIsDark;
-          setIsDarkMode(nextIsDark);
-        }
-      } catch (error) {
-        // No-op: keep default theme if fetch fails.
+    try {
+      const displayMode = localStorage.getItem(THEME_STORAGE_KEY);
+      if (didToggleThemeRef.current) return;
+      if (displayMode === "dark" || displayMode === "light") {
+        const nextIsDark = displayMode === "dark";
+        isDarkModeRef.current = nextIsDark;
+        setIsDarkMode(nextIsDark);
       }
-    });
-  }, [startTransition]);
+    } catch (error) {
+      // No-op: keep default theme if storage read fails.
+    }
+  }, []);
 
   useEffect(() => {
     isDarkModeRef.current = isDarkMode;
