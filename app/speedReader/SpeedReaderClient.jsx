@@ -16,7 +16,7 @@ import {
   Crosshair
 } from 'lucide-react';
 
-const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
+const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark", textFiles = [] }) => {
   // --- State ---
   const [inputText, setInputText] = useState(defaultText);
   const [words, setWords] = useState([]);
@@ -30,6 +30,9 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
   const [sourceUrl, setSourceUrl] = useState("");
   const [isFetchingUrl, setIsFetchingUrl] = useState(false);
   const [urlError, setUrlError] = useState("");
+  const [selectedTextFile, setSelectedTextFile] = useState("");
+  const [isLoadingTextFile, setIsLoadingTextFile] = useState(false);
+  const [textFileError, setTextFileError] = useState("");
 
   // --- Refs ---
   const timerRef = useRef(null);
@@ -148,6 +151,31 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
 
   const handleTextChange = (e) => {
     setInputText(e.target.value);
+  };
+
+  const handleSelectTextFile = async (e) => {
+    const nextFile = e.target.value;
+    setSelectedTextFile(nextFile);
+    setTextFileError("");
+
+    if (!nextFile) return;
+
+    setIsLoadingTextFile(true);
+    try {
+      const response = await fetch(`/${encodeURI(nextFile)}`, { cache: "no-store" });
+      if (!response.ok) {
+        setTextFileError("Could not load that file.");
+        return;
+      }
+      const text = await response.text();
+      setInputText(text);
+      setCurrentIndex(0);
+      setIsPlaying(false);
+    } catch (error) {
+      setTextFileError("Failed to load the selected file.");
+    } finally {
+      setIsLoadingTextFile(false);
+    }
   };
 
   const clearText = () => {
@@ -461,6 +489,35 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
               </button>
             </div>
           </div>
+          <div className="flex flex-col md:flex-row gap-3">
+            <label htmlFor="textFileSelect" className="sr-only">
+              Select a Text File
+            </label>
+            <select
+              id="textFileSelect"
+              name="textFileSelect"
+              value={selectedTextFile}
+              onChange={handleSelectTextFile}
+              disabled={textFiles.length === 0 || isLoadingTextFile}
+              className={`min-w-0 w-full h-12 md:h-11 px-3 rounded-lg border focus-visible:outline-none focus-visible:ring-2 transition-colors text-base md:text-sm
+                ${isDarkMode
+                  ? 'bg-slate-900 border-slate-800 focus:ring-indigo-900 text-slate-300'
+                  : 'bg-white border-slate-200 focus:ring-indigo-100 text-slate-700'
+                } ${textFiles.length === 0 || isLoadingTextFile ? 'opacity-60 cursor-not-allowed' : ''}`}
+            >
+              <option value="">
+                {textFiles.length === 0 ? "No text files available" : "Select a text file…"}
+              </option>
+              {textFiles.map((file) => (
+                <option key={file} value={file}>
+                  {file}
+                </option>
+              ))}
+            </select>
+          </div>
+          {textFileError ? (
+            <p className="text-xs text-rose-500" aria-live="polite">{textFileError}</p>
+          ) : null}
           <div className="flex flex-col md:flex-row gap-3 md:items-center">
             <label htmlFor="sourceUrl" className="sr-only">
               Article URL

@@ -1,5 +1,5 @@
 import path from "path";
-import { readFile } from "fs/promises";
+import { readFile, readdir } from "fs/promises";
 import SpeedReaderClient from "./SpeedReaderClient";
 import { DEFAULT_TEXT_FILENAME, DEFAULT_TEXT_FALLBACK } from "./utils";
 
@@ -16,7 +16,20 @@ async function loadDefaultText() {
   }
 }
 
+async function loadTextFiles() {
+  try {
+    const publicDir = path.join(process.cwd(), "public");
+    const entries = await readdir(publicDir, { recursive: true });
+    return entries
+      .filter((entry) => entry.toLowerCase().endsWith(".txt"))
+      .sort((a, b) => a.localeCompare(b));
+  } catch (error) {
+    return [];
+  }
+}
+
 export default async function SpeedReaderPage() {
   const defaultText = await loadDefaultText();
-  return <SpeedReaderClient defaultText={defaultText} />;
+  const textFiles = await loadTextFiles();
+  return <SpeedReaderClient defaultText={defaultText} textFiles={textFiles} />;
 }
