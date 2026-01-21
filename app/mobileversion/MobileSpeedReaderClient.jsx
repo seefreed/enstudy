@@ -237,24 +237,13 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
 
   const renderWord = (word) => {
     if (!word) return null;
-    const { lead, core, tail } = splitWord(word);
-    const pivotIndex = Math.max(1, Math.ceil(core.length * 0.35)) - 1;
-    const leftText = core.slice(0, pivotIndex);
-    const rightText = core.slice(pivotIndex + 1);
-
     return (
-      <span className="grid w-full grid-cols-[1fr_auto_1fr] items-baseline break-words font-mono">
-        <span className={`text-right ${isDarkMode ? "text-slate-100" : "text-slate-900"}`}>
-          {lead ? <span className="text-slate-400/70">{lead}</span> : null}
-          {leftText}
-        </span>
-        <span className={showAnchors ? "text-rose-400 drop-shadow-[0_0_12px_rgba(248,113,113,0.45)]" : "text-slate-900"}>
-          {core.charAt(pivotIndex) || ""}
-        </span>
-        <span className={`text-left ${isDarkMode ? "text-slate-100" : "text-slate-900"}`}>
-          {rightText}
-          {tail ? <span className="text-slate-400/70">{tail}</span> : null}
-        </span>
+      <span
+        className={`block w-full text-center font-mono ${
+          isDarkMode ? "text-slate-100" : "text-slate-900"
+        }`}
+      >
+        {word}
       </span>
     );
   };
