@@ -485,6 +485,76 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
               Upload File
             </button>
           </div>
+          <div className="mt-3 grid gap-3">
+            <select
+              id="textFileSelectMobile"
+              name="textFileSelectMobile"
+              value={selectedTextFile}
+              onChange={handleSelectTextFile}
+              aria-label="Select a text file"
+              disabled={textFiles.length === 0 || isLoadingTextFile}
+              className={`h-12 w-full rounded-2xl border px-4 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 ${
+                textFiles.length === 0 || isLoadingTextFile ? "opacity-60 cursor-not-allowed" : ""
+              } ${isDarkMode ? "border-white/10 bg-slate-900/80 text-slate-200" : "border-slate-200 bg-white text-slate-700"}`}
+            >
+              <option value="">
+                {textFiles.length === 0 ? "No text files available" : "Select a text file…"}
+              </option>
+              {textFiles.map((file) => (
+                <option key={file} value={file}>
+                  {file}
+                </option>
+              ))}
+            </select>
+            {textFileError ? (
+              <p className={`text-xs ${isDarkMode ? "text-rose-300" : "text-rose-600"}`} aria-live="polite">
+                {textFileError}
+              </p>
+            ) : null}
+
+            <div className="grid gap-3">
+              <label htmlFor="sourceUrlMobile" className="sr-only">
+                Article URL
+              </label>
+              <div
+                className={`flex items-center gap-3 rounded-2xl border px-3 ${
+                  isDarkMode ? "border-white/10 bg-slate-900/80" : "border-slate-200 bg-white"
+                }`}
+              >
+                <Link size={16} aria-hidden="true" className={isDarkMode ? "text-slate-400" : "text-slate-500"} />
+                <input
+                  type="url"
+                  value={sourceUrl}
+                  onChange={(event) => setSourceUrl(event.target.value)}
+                  placeholder="https://example.com/article…"
+                  id="sourceUrlMobile"
+                  name="sourceUrlMobile"
+                  inputMode="url"
+                  autoComplete="url"
+                  spellCheck={false}
+                  aria-label="Article URL"
+                  className={`h-12 w-full bg-transparent text-base focus-visible:outline-none ${
+                    isDarkMode ? "text-slate-200" : "text-slate-700"
+                  }`}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleFetchUrl}
+                disabled={isFetchingUrl}
+                className={`h-12 w-full rounded-2xl text-sm font-semibold text-white transition-colors focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none ${
+                  isFetchingUrl ? "bg-slate-700/80 cursor-not-allowed" : "bg-rose-500 hover:bg-rose-400"
+                }`}
+              >
+                {isFetchingUrl ? "Fetching…" : "Fetch Article"}
+              </button>
+            </div>
+            {urlError ? (
+              <p className={`text-xs ${isDarkMode ? "text-rose-300" : "text-rose-600"}`} aria-live="polite">
+                {urlError}
+              </p>
+            ) : null}
+          </div>
           <div className={`mt-3 flex items-center justify-between text-xs ${isDarkMode ? "text-slate-400" : "text-slate-600"}`}>
             <span>{words.length} words</span>
             <button
@@ -563,90 +633,6 @@ const MobileSpeedReaderClient = ({ defaultText, textFiles = [] }) => {
               {words.length} words detected. Estimated time: {estimatedMinutes} min.
             </p>
 
-            <div className="mt-5 grid gap-3">
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={triggerFileUpload}
-                  className={`flex-1 rounded-2xl border px-4 py-3 text-sm font-semibold focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none flex justify-center ${
-                    isDarkMode
-                      ? "border-white/10 bg-white/5 text-slate-200 hover:bg-white/10"
-                      : "border-slate-200 bg-slate-100 text-slate-700 hover:bg-slate-50"
-                  }`}
-                >
-                  <Upload size={16} aria-hidden="true" />
-                  <span className="ml-1">Upload .txt/.md</span>
-                </button>
-              </div>
-
-              <select
-                id="textFileSelectMobile"
-                name="textFileSelectMobile"
-                value={selectedTextFile}
-                onChange={handleSelectTextFile}
-                disabled={textFiles.length === 0 || isLoadingTextFile}
-                className={`h-12 w-full rounded-2xl border px-4 text-base focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 ${
-                  textFiles.length === 0 || isLoadingTextFile ? "opacity-60 cursor-not-allowed" : ""
-                } ${isDarkMode ? "border-white/10 bg-slate-900/80 text-slate-200" : "border-slate-200 bg-white text-slate-700"}`}
-              >
-                <option value="">
-                  {textFiles.length === 0 ? "No text files available" : "Select a text file…"}
-                </option>
-                {textFiles.map((file) => (
-                  <option key={file} value={file}>
-                    {file}
-                  </option>
-                ))}
-              </select>
-              {textFileError ? (
-                <p className={`text-xs ${isDarkMode ? "text-rose-300" : "text-rose-600"}`} aria-live="polite">
-                  {textFileError}
-                </p>
-              ) : null}
-
-              <div className="grid gap-3">
-                <label htmlFor="sourceUrlMobile" className="sr-only">
-                  Article URL
-                </label>
-                <div
-                  className={`flex items-center gap-3 rounded-2xl border px-3 ${
-                    isDarkMode ? "border-white/10 bg-slate-900/80" : "border-slate-200 bg-white"
-                  }`}
-                >
-                  <Link size={16} aria-hidden="true" className={isDarkMode ? "text-slate-400" : "text-slate-500"} />
-                  <input
-                    type="url"
-                    value={sourceUrl}
-                    onChange={(event) => setSourceUrl(event.target.value)}
-                    placeholder="https://example.com/article…"
-                    id="sourceUrlMobile"
-                    name="sourceUrlMobile"
-                    inputMode="url"
-                    autoComplete="url"
-                    spellCheck={false}
-                    aria-label="Article URL"
-                    className={`h-12 w-full bg-transparent text-base focus-visible:outline-none ${
-                      isDarkMode ? "text-slate-200" : "text-slate-700"
-                    }`}
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={handleFetchUrl}
-                  disabled={isFetchingUrl}
-                  className={`h-12 w-full rounded-2xl text-sm font-semibold text-white transition-colors focus-visible:ring-2 focus-visible:ring-rose-300/70 focus-visible:outline-none ${
-                    isFetchingUrl ? "bg-slate-700/80 cursor-not-allowed" : "bg-rose-500 hover:bg-rose-400"
-                  }`}
-                >
-                  {isFetchingUrl ? "Fetching…" : "Fetch Article"}
-                </button>
-              </div>
-              {urlError ? (
-                <p className={`text-xs ${isDarkMode ? "text-rose-300" : "text-rose-600"}`} aria-live="polite">
-                  {urlError}
-                </p>
-              ) : null}
-            </div>
           </div>
         </div>
       ) : null}
