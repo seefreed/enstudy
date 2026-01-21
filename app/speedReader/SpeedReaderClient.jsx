@@ -246,7 +246,7 @@ const SpeedReaderApp = ({ defaultText, initialDisplayMode = "dark" }) => {
           {lead ? <span className="text-slate-400/70">{lead}</span> : null}
           {leftText}
         </span>
-        <span className="text-rose-400 drop-shadow-[0_0_12px_rgba(248,113,113,0.45)]">
+        <span className={showAnchors ? "text-rose-400 drop-shadow-[0_0_12px_rgba(248,113,113,0.45)]" : "text-black"}>
           {core.charAt(pivotIndex) || ""}
         </span>
         <span className="text-left">
